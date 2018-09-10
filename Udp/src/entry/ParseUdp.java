@@ -1,3 +1,5 @@
+package entry;
+
 import util.Util;
 
 import java.io.IOException;
@@ -5,17 +7,17 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class Udp {
+public class ParseUdp {
     private static final String HEADER = "ADBA";
 
-    public String response(){
+    public String parse(){
         DatagramSocket socket = null;
         try{
             //建立udp的服务 ，并且要监听一个端口
             socket = new DatagramSocket(3333);
 
             //准备空的数据包用于存放数据
-            byte[] buf = new byte[10240];
+            byte[] buf = new byte[65507];
 
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length); // 1024
             //调用udp的服务接收数据
@@ -110,8 +112,6 @@ public class Udp {
             System.arraycopy(buf, timeStartPos - 3, crcByte, 0, crcByte.length);
             int crc = Integer.parseInt(Util.ByteToHex(crcByte),16);
             System.out.println(crc);
-
-
 
         }catch(SocketException e) {
             System.out.println(e);
@@ -269,10 +269,5 @@ public class Udp {
         String orAnd = Util.ByteToHex(orAndByte);
         System.out.println(orAnd);
         return "";
-    }
-
-    public static void main(String args[]){
-        Udp udp = new Udp();
-        udp.response();
     }
 }

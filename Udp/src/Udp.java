@@ -21,9 +21,6 @@ public class Udp {
             //调用udp的服务接收数据
             socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
 
-            String hex = Util.ByteToHex(buf);
-            System.out.println("--"+hex);
-
             byte[] header = new byte[2];
             System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节
             if(!checkHeqader(header)){

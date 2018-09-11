@@ -1,6 +1,6 @@
-package util;
+package com.sunshineforce.hardware.util;
 
-public class Util {
+public class ByteUtil {
 
     public static String ByteToHex(byte[] byteArr){
         StringBuilder buf = new StringBuilder(byteArr.length * 2);
@@ -45,7 +45,7 @@ public class Util {
 
     public static void main(String args[]){
         String hexStr = "AD BA";
-        String str = Util.hexToStr(hexStr);
+        String str = ByteUtil.hexToStr(hexStr);
         System.out.println(str);
     }
 }

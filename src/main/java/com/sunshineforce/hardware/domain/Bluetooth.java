@@ -19,67 +19,150 @@ public class Bluetooth implements Serializable {
 
     private static final long serialVersionUID = -8555535280590699348L;
 
-    //登录账号
+    //蓝牙mac
     private String bluetoothMac;
-    //登录密码
-    private String password;
-    //邮箱
-    private String email;
-    //联系电话
-    private String mobile;
-    //创建时间
-    private Date createTime;
-    //数据状态
-    private Integer dataStatus;
+    //无限设备mac
+    private String wifiMac;
+    //心率
+    private int heartRate;
+    //步数
+    private int step;
+    //活动状态
+    private String active;
+    //睡眠状态
+    private String sleep;
+    //舒张压
+    private int diastolicPressure;
+    //收缩压
+    private int systolicPressure;
+    //血氧
+    private int bloodOxygen;
+    //hrv
+    private int hrv;
+    //上传数据utc
+    private long utc;
+    //静止心率
+    private int staticHeartRate;
 
     public Bluetooth() {
     }
 
-    
-
-   
-
-    public String getPassword() {
-        return password;
+    public Bluetooth(String bluetoothMac, String wifiMac, int heartRate, int step, String active, String sleep, int diastolicPressure, int systolicPressure, int bloodOxygen, int hrv, long utc, int staticHeartRate) {
+        this.bluetoothMac = bluetoothMac;
+        this.wifiMac = wifiMac;
+        this.heartRate = heartRate;
+        this.step = step;
+        this.active = active;
+        this.sleep = sleep;
+        this.diastolicPressure = diastolicPressure;
+        this.systolicPressure = systolicPressure;
+        this.bloodOxygen = bloodOxygen;
+        this.hrv = hrv;
+        this.utc = utc;
+        this.staticHeartRate = staticHeartRate;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public String getEmail() {
-        return email;
+    public String getBluetoothMac() {
+        return bluetoothMac;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setBluetoothMac(String bluetoothMac) {
+        this.bluetoothMac = bluetoothMac;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getWifiMac() {
+        return wifiMac;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setWifiMac(String wifiMac) {
+        this.wifiMac = wifiMac;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public int getHeartRate() {
+        return heartRate;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setHeartRate(int heartRate) {
+        this.heartRate = heartRate;
     }
 
-    public Integer getDataStatus() {
-        return dataStatus;
+    public int getStep() {
+        return step;
     }
 
-    public void setDataStatus(Integer dataStatus) {
-        this.dataStatus = dataStatus;
+    public void setStep(int step) {
+        this.step = step;
     }
 
- /*   @Override
+    public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }
+
+    public String getSleep() {
+        return sleep;
+    }
+
+    public void setSleep(String sleep) {
+        this.sleep = sleep;
+    }
+
+    public int getDiastolicPressure() {
+        return diastolicPressure;
+    }
+
+    public void setDiastolicPressure(int diastolicPressure) {
+        this.diastolicPressure = diastolicPressure;
+    }
+
+    public int getSystolicPressure() {
+        return systolicPressure;
+    }
+
+    public void setSystolicPressure(int systolicPressure) {
+        this.systolicPressure = systolicPressure;
+    }
+
+    public int getBloodOxygen() {
+        return bloodOxygen;
+    }
+
+    public void setBloodOxygen(int bloodOxygen) {
+        this.bloodOxygen = bloodOxygen;
+    }
+
+    public int getHrv() {
+        return hrv;
+    }
+
+    public void setHrv(int hrv) {
+        this.hrv = hrv;
+    }
+
+    public long getUtc() {
+        return utc;
+    }
+
+    public void setUtc(long utc) {
+        this.utc = utc;
+    }
+
+    public int getStaticHeartRate() {
+        return staticHeartRate;
+    }
+
+    public void setStaticHeartRate(int staticHeartRate) {
+        this.staticHeartRate = staticHeartRate;
+    }
+
+    /*   @Override
     public String toString() {
         return "User{" +
                 "account='" + account + '\'' +

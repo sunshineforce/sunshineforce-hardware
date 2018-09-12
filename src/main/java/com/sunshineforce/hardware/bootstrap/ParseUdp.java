@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.sunshineforce.hardware.domain.Bluetooth;
 import com.sunshineforce.hardware.util.ByteUtil;
 
 public class ParseUdp {
     private static final String HEADER = "ADBA";
 
-    public String parse(){
+    public List<Bluetooth> parse(){
         DatagramSocket socket = null;
+        List<Bluetooth> bluetoothList = new ArrayList<>();
         try{
             //建立udp的服务 ，并且要监听一个端口
             socket = new DatagramSocket(3333);
@@ -26,14 +30,16 @@ public class ParseUdp {
             byte[] header = new byte[2];
             System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节
             if(!checkHeqader(header)){
-                return "header false";
+                System.out.println("header false");
+                return null;
             }
 
             byte[] typeByte = new byte[1];
             System.arraycopy(buf, 4, typeByte, 0, typeByte.length); //取消息类型
             int type = Integer.parseInt(ByteUtil.ByteToHex(typeByte), 16);
             if(type != 1){
-                return "type error";
+                System.out.println("type error");
+                return null;
             }
 
             //取长度
@@ -95,9 +101,12 @@ public class ParseUdp {
                 System.out.println("broadcastValue  "+broadcastValue.length());
 
                 //当手环未连接app时只发送可广播数据,解析data
-                getData(broadcastValueByte);
-
-
+                Bluetooth bluetooth = getData(broadcastValueByte);
+                if(bluetooth == null){
+                    continue;
+                }
+                bluetooth.setBluetoothMac(mac);
+                bluetoothList.add(bluetooth);
             }
 
             //取time
@@ -120,7 +129,7 @@ public class ParseUdp {
         }finally {
             socket.close();
         }
-        return "";
+        return bluetoothList;
     }
 
     //check header
@@ -129,7 +138,8 @@ public class ParseUdp {
         return HEADER.equals(ByteUtil.ByteToHex(header).toUpperCase());
     }
 
-    public String getData(byte[] broadcastValueByte){
+    public Bluetooth getData(byte[] broadcastValueByte){
+        Bluetooth bluetooth = new Bluetooth();
         System.out.println("broadcastValue");
         //取uuid
         byte[] uuidByte = new byte[6];
@@ -161,7 +171,8 @@ public class ParseUdp {
         String packageId = ByteUtil.ByteToHex(packageByte);
         System.out.println("package:     "+packageId);
         if(!packageId.toUpperCase().equals("B8")){
-            return "packageId err";
+            System.out.println("packageId err");
+            return null;
         }
 
         //取心率
@@ -169,6 +180,8 @@ public class ParseUdp {
         System.arraycopy(broadcastValueByte, 10, heartRateByte, 0, heartRateByte.length);
         int heartRate = Integer.parseInt(ByteUtil.ByteToHex(heartRateByte), 16);
         System.out.println("heartRate:    "+heartRate);
+
+        bluetooth.setHeartRate(heartRate);
 
         //步数，分低字节，中字节，高字节，步数为高中低排序
         byte[] lowStepByte = new byte[1];
@@ -186,11 +199,15 @@ public class ParseUdp {
         int step = Integer.parseInt(stepHex,16);
         System.out.println("step"+step);
 
+        bluetooth.setStep(step);
+
         //取活动状态
         byte[] activeByte = new byte[1];
         System.arraycopy(broadcastValueByte, 14, activeByte, 0, activeByte.length);
         String active = ByteUtil.ByteToHex(activeByte);
         System.out.println(active);
+
+        bluetooth.setActive(active);
 
         //睡眠状态
         byte[] sleepByte = new byte[1];
@@ -209,29 +226,35 @@ public class ParseUdp {
         }
         System.out.println(sleepStr);
 
+        bluetooth.setSleep(sleepStr);
+
         //舒张压
         byte[] diastolicPressureByte = new byte[1];
         System.arraycopy(broadcastValueByte, 16, diastolicPressureByte, 0, diastolicPressureByte.length);
         int diastolicPressure = Integer.parseInt(ByteUtil.ByteToHex(diastolicPressureByte),16);
         System.out.println(diastolicPressure);
+        bluetooth.setDiastolicPressure(diastolicPressure);
 
         //收缩压
         byte[] systolicPressureByte = new byte[1];
         System.arraycopy(broadcastValueByte, 17, systolicPressureByte, 0, systolicPressureByte.length);
         int systolicPressure = Integer.parseInt(ByteUtil.ByteToHex(systolicPressureByte),16);
         System.out.println(systolicPressure);
+        bluetooth.setSystolicPressure(systolicPressure);
 
         //血氧
         byte[] bloodOxygenByte = new byte[1];
         System.arraycopy(broadcastValueByte, 18, bloodOxygenByte, 0, bloodOxygenByte.length);
         int bloodOxygen = Integer.parseInt(ByteUtil.ByteToHex(bloodOxygenByte),16);
         System.out.println(bloodOxygen);
+        bluetooth.setBloodOxygen(bloodOxygen);
 
         //HRV
         byte[] hrvByte = new byte[1];
         System.arraycopy(broadcastValueByte, 19, hrvByte, 0, hrvByte.length);
         int hrv = Integer.parseInt(ByteUtil.ByteToHex(hrvByte),16);
         System.out.println(hrv);
+        bluetooth.setHrv(hrv);
 
         //软件版本
         byte[] versionByte = new byte[1];
@@ -244,12 +267,14 @@ public class ParseUdp {
         System.arraycopy(broadcastValueByte, 20, utcByte, 0, utcByte.length);
         long utc = Long.parseLong(ByteUtil.ByteToHex(utcByte),16);
         System.out.println(utc);
+        bluetooth.setUtc(utc);
 
         //静止心率
         byte[] staticHeartRateByte = new byte[1];
         System.arraycopy(broadcastValueByte, 24, staticHeartRateByte, 0, staticHeartRateByte.length);
         int staticHeartRate = Integer.parseInt(ByteUtil.ByteToHex(staticHeartRateByte),16);
         System.out.println(staticHeartRate);
+        bluetooth.setStaticHeartRate(staticHeartRate);
 
         //预留
         byte[] nullByte = new byte[1];
@@ -268,7 +293,7 @@ public class ParseUdp {
         System.arraycopy(broadcastValueByte, length - 1, orAndByte, 0, orAndByte.length);
         String orAnd = ByteUtil.ByteToHex(orAndByte);
         System.out.println(orAnd);
-        return "";
+        return bluetooth;
     }
     
     private ParseUdp(){

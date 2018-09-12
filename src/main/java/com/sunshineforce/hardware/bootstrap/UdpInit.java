@@ -25,12 +25,12 @@ public class UdpInit implements InitializingBean, ServletContextAware{
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
-        System.out.println("222222222222222222222222");
         final ParseUdp parseUdp = ParseUdp.getInstance();
         ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
         singleThreadPool.execute(new Runnable(){
             @Override
             public void run() {
+                System.out.println("222222222222222222222222");
                 List<Bluetooth> bluetoothList = parseUdp.parse();
                 iBluetoothService.insertList(bluetoothList);
             }

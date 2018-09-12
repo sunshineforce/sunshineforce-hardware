@@ -119,7 +119,10 @@ public abstract class BasicSetServiceImpl<T> implements IBasicSetMapper<T> {
         if(CollectionUtils.isEmpty(recordList)) {
             return 0;
         }
-        return mySqlMapper.insertList(recordList);
+        for(T record : recordList){
+            insert(record);
+        }
+        return 1;
     }
 
     @Override

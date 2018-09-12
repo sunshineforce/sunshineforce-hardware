@@ -60,7 +60,7 @@ public class ParseUdp {
             int humidity = Integer.parseInt(ByteUtil.ByteToHex(humidityByte), 16);
             System.out.println(humidity);
 
-            //取蓝牙设备mac
+            //取设备mac
             byte[] macByte = new byte[6];
             System.arraycopy(buf, 11, macByte, 0, macByte.length);
             String mac = ByteUtil.ByteToHex(macByte);
@@ -84,18 +84,18 @@ public class ParseUdp {
             for(int i = 0; i < num; i++){
                 int startPos = i * 38;
                 //取无线设备mac
-                byte[] wifiMacByte = new byte[6];
-                System.arraycopy(dataByte, startPos, wifiMacByte, 0, wifiMacByte.length);
-                String wifiMac = ByteUtil.ByteToHex(wifiMacByte);
-                System.out.println("wifiMac:  "+wifiMac);
+                byte[] bluetoothMacByte = new byte[6];
+                System.arraycopy(dataByte, startPos, bluetoothMacByte, 0, bluetoothMacByte.length);
+                String bluetoothMac = ByteUtil.ByteToHex(bluetoothMacByte);
+                System.out.println("bluetoothMac:  "+bluetoothMac);
                 //无线设备信号强度
                 byte[] signalByte = new byte[1];
-                System.arraycopy(dataByte, startPos + wifiMacByte.length, signalByte, 0, signalByte.length);
+                System.arraycopy(dataByte, startPos + bluetoothMacByte.length, signalByte, 0, signalByte.length);
                 int signal = Integer.parseInt(ByteUtil.ByteToHex(signalByte),16);
                 System.out.println("signal  "+signal);
                 //取广播数据
                 byte[] broadcastValueByte = new byte[31];
-                System.arraycopy(dataByte, startPos + wifiMacByte.length + signalByte.length, broadcastValueByte, 0, broadcastValueByte.length);
+                System.arraycopy(dataByte, startPos + bluetoothMacByte.length + signalByte.length, broadcastValueByte, 0, broadcastValueByte.length);
                 String broadcastValue = ByteUtil.ByteToHex(broadcastValueByte);
                 System.out.println("broadcastValue  "+broadcastValue);
                 System.out.println("broadcastValue  "+broadcastValue.length());
@@ -105,7 +105,8 @@ public class ParseUdp {
                 if(bluetooth == null){
                     continue;
                 }
-                bluetooth.setBluetoothMac(mac);
+                bluetooth.setWifiMac(mac);
+                bluetooth.setBluetoothMac(bluetoothMac);
                 bluetoothList.add(bluetooth);
             }
 

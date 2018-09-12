@@ -34,7 +34,7 @@
     </appender>
 
 
-    <logger name="com.tools.dao" level="DEBUG"></logger>
+    <logger name="com.sunshineforce.hardware.dao" level="DEBUG"></logger>
 
     <!-- 日志输出级别 -->
     <root level="INFO">

@@ -47,7 +47,7 @@
         <!-- 自动扫描mapping.xml文件 -->
         <property name="mapperLocations">
             <list>
-                <value>classpath*:com/sunshineforce/hardware/dao/**/**/*.xml</value>
+                <value>classpath*:com/sunshineforce/hardware/dao/**/*.xml</value>
             </list>
         </property>
         <!-- 加入Mybatis物理分页插件 -->
@@ -81,9 +81,9 @@
     <!-- com.github.abel533.entity 自动扫描分页主键 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage"
-                  value="com.sunshineforce.hardware.dao.*.mapper,
-			                 com.sunshineforce.hardware.*.*.mapper,
-			                 com.sunshineforce.hardware.*.*.*.mapper"/>
+                  value="com.sunshineforce.hardware.dao.mapper,
+			                 com.sunshineforce.hardware.*.mapper,
+			                 com.sunshineforce.hardware.*.*.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
     <bean id="sqlMapper" class="com.github.abel533.sql.SqlMapper" scope="prototype">

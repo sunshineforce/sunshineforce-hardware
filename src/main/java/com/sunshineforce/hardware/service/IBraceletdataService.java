@@ -1,7 +1,8 @@
 package com.sunshineforce.hardware.service;
 
 import com.sunshineforce.hardware.base.mybatis.IBasicSetMapper;
-import com.sunshineforce.hardware.domain.Bluetooth;
+import com.sunshineforce.hardware.domain.Braceletdata;
+import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 
 
-public interface IBluetoothService extends IBasicSetMapper<Bluetooth> {
-    List<Bluetooth> selectUsers();
+public interface IBraceletdataService extends IBasicSetMapper<Braceletdata> {
+    List<Braceletdata> selectBraceletdatas();
+    long countBraceletdata(BraceletdataRequest braceletdataRequest);
 }

@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.sunshineforce.hardware.base.mybatis.BasicService;
 import com.sunshineforce.hardware.base.mybatis.IBasicMapper;
 import com.sunshineforce.hardware.base.utils.Paging;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import javax.annotation.Resource;
@@ -24,10 +25,10 @@ import java.util.Map;
 
 public abstract class BasicServiceImpl<T> implements BasicService<T> {
 
-    @Resource
+    @Autowired
     protected Mapper<T> mapper;
 
-    @Resource
+    @Autowired
     protected IBasicMapper<T> basicMapper;
 
     @Override

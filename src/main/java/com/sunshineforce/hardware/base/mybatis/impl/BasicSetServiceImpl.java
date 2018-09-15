@@ -6,6 +6,7 @@ import com.sunshineforce.hardware.base.mybatis.IBasicSetMapper;
 import com.sunshineforce.hardware.base.mybatis.InMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -21,13 +22,13 @@ import java.util.List;
  */
 public abstract class BasicSetServiceImpl<T> implements IBasicSetMapper<T> {
 
-    @Resource
+    @Autowired
     protected Mapper<T> mapper;
 
-    @Resource
+    @Autowired
     protected MySqlMapper<T> mySqlMapper;
 
-    @Resource
+    @Autowired
     protected InMapper<T> inMapper;
 
     @Override

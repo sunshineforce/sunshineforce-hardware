@@ -35,7 +35,9 @@ public enum ErrorCode {
     FILE_TYPE_NOT_SUPPORT(42205, "File Type Not Support"),
     FILE_CONTENT_NULL(42205, "File Content Null"),
 
-    INTERNAL_SERVER_ERROR(500, "Internal Server Error");
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+
+    SYSTEM_ERROR(9999, "System Error");
 
     private int code;
     private String message;

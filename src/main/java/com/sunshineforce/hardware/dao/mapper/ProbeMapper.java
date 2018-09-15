@@ -1,7 +1,8 @@
 package com.sunshineforce.hardware.dao.mapper;
 
 import com.github.abel533.mapper.Mapper;
-import com.sunshineforce.hardware.domain.Bluetooth;
+import com.sunshineforce.hardware.domain.Braceletdata;
+import com.sunshineforce.hardware.domain.Probe;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,6 +16,6 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface BluetoothMapper extends Mapper<Bluetooth> {
+public interface ProbeMapper extends Mapper<Probe> {
 
 }

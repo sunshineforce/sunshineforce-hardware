@@ -14,15 +14,15 @@ import java.util.Date;
  * To change this template use File | Settings | File and Code Template
  */
 
-@Table(name = "t_bluetooth")
-public class Bluetooth implements Serializable {
+@Table(name = "t_braceletdata")
+public class Braceletdata implements Serializable {
 
     private static final long serialVersionUID = -8555535280590699348L;
 
-    //蓝牙mac
-    private String bluetoothMac;
-    //无限设备mac
-    private String wifiMac;
+    //探针mac
+    private String probeMac;
+    //手环mac
+    private String braceletMac;
     //心率
     private int heartRate;
     //步数
@@ -40,50 +40,40 @@ public class Bluetooth implements Serializable {
     //hrv
     private int hrv;
     //上传数据utc
-    private long utc;
+    private Long utc;
     //静止心率
     private int staticHeartRate;
+    //uuid
+    private String uuid;
+    //添加时间
+    private Long addTime;
 
-    public Bluetooth() {
+    public String getProbeMac() {
+        return probeMac;
     }
 
-    public Bluetooth(String bluetoothMac, String wifiMac, int heartRate, int step, String active, String sleep, int diastolicPressure, int systolicPressure, int bloodOxygen, int hrv, long utc, int staticHeartRate) {
-        this.bluetoothMac = bluetoothMac;
-        this.wifiMac = wifiMac;
-        this.heartRate = heartRate;
-        this.step = step;
-        this.active = active;
-        this.sleep = sleep;
-        this.diastolicPressure = diastolicPressure;
-        this.systolicPressure = systolicPressure;
-        this.bloodOxygen = bloodOxygen;
-        this.hrv = hrv;
-        this.utc = utc;
-        this.staticHeartRate = staticHeartRate;
+    public void setProbeMac(String probeMac) {
+        this.probeMac = probeMac;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public String getBraceletMac() {
+        return braceletMac;
     }
 
-    public String getBluetoothMac() {
-        return bluetoothMac;
-    }
-
-    public void setBluetoothMac(String bluetoothMac) {
-        this.bluetoothMac = bluetoothMac;
-    }
-
-    public String getWifiMac() {
-        return wifiMac;
-    }
-
-    public void setWifiMac(String wifiMac) {
-        this.wifiMac = wifiMac;
+    public void setBraceletMac(String braceletMac) {
+        this.braceletMac = braceletMac;
     }
 
     public int getHeartRate() {
         return heartRate;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setHeartRate(int heartRate) {
@@ -162,7 +152,14 @@ public class Bluetooth implements Serializable {
         this.staticHeartRate = staticHeartRate;
     }
 
-    /*   @Override
+    public long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(long addTime) {
+        this.addTime = addTime;
+    }
+/*   @Override
     public String toString() {
         return "User{" +
                 "account='" + account + '\'' +

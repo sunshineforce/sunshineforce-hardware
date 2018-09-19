@@ -7,13 +7,14 @@ import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
- * ProjectName: ssm-maven
+ * ProjectName: sunshineforce-hardware
  * CreateUser:  lixiaopeng
- * CreateTime : 2018/6/27 16:05
+ * CreateTime : 2018/9/19 18:33
  * ModifyUser: bjlixiaopeng
- * Class Description: common paging class
+ * Class Description:
  * To change this template use File | Settings | File and Code Template
  */
+
 public interface InMapper<T> {
 
     /**

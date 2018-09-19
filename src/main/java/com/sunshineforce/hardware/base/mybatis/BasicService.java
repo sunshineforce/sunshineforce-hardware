@@ -1,16 +1,11 @@
 package com.sunshineforce.hardware.base.mybatis;
 
+/**
+ * 如底层没有继承通用Mapper,那么在服务层请勿集成该接口
+ */
+
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA
- * ProjectName: ssm-maven
- * CreateUser:  lixiaopeng
- * CreateTime : 2018/6/27 16:05
- * ModifyUser: bjlixiaopeng
- * Class Description: common paging class
- * To change this template use File | Settings | File and Code Template
- */
 public interface BasicService<T> {
 	/**
 	 * 查询一个对象

@@ -5,30 +5,22 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sunshineforce.hardware.base.mybatis.BasicService;
 import com.sunshineforce.hardware.base.mybatis.IBasicMapper;
-import com.sunshineforce.hardware.base.utils.Paging;
+import com.sunshineforce.hardware.base.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA
- * ProjectName: ssm-maven
- * CreateUser:  lixiaopeng
- * CreateTime : 2018/6/27 16:05
- * ModifyUser: bjlixiaopeng
- * Class Description: common paging class
- * To change this template use File | Settings | File and Code Template
+ * 通用服务层抽象类
+ * @author bjlixiaopeng
+ * @since 2017/3/13 17:21
  */
-
 public abstract class BasicServiceImpl<T> implements BasicService<T> {
 
     @Autowired
     protected Mapper<T> mapper;
-
-    @Autowired
+    @Autowired(required = false)
     protected IBasicMapper<T> basicMapper;
 
     @Override
@@ -92,17 +84,17 @@ public abstract class BasicServiceImpl<T> implements BasicService<T> {
      * @param params 查询参数
      * @return PageVo 返回对象
      */
-    public <K, V> Paging selectPageByParams(Paging page, Map<K, V> params) {
-        PageHelper.startPage(page.getPageIndex(), page.getPageCapacity(), true, false);
+    public <K, V> PageVo selectPageByMap(PageVo page, Map<K, V> params) {
+        PageHelper.startPage(page.getStart(), page.getLimit(), true, false); //设置分页
 
         List result = basicMapper.selectPageByMap(params);
         PageInfo pageInfo = new PageInfo(result);
 
-        page.setTotalPages(pageInfo.getTotal());
-        page.setPageIndex(pageInfo.getPageNum());
-        page.setPageCapacity(pageInfo.getPageSize());
-        page.setData(result);
-        page.setCode(HttpStatus.OK.value());
+        page.setTotal(pageInfo.getTotal());
+        page.setStart(pageInfo.getPageNum());
+        page.setLimit(pageInfo.getPageSize());
+        page.setList(result);
+        page.setRs(1);//默认查询结果成功
         return page;
     }
 

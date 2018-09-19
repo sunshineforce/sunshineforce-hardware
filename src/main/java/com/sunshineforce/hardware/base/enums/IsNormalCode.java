@@ -1,8 +1,9 @@
 package com.sunshineforce.hardware.base.enums;
 
 public enum IsNormalCode {
-    NORMAL(0, "normal"),
-    NOTNORMAL(1, "notNormal");
+    REGULAR(0, "regular"),
+    HEIGHT(1, "height"),
+    LOW(2, "low");
 
     private int id;
     private String isMormal;

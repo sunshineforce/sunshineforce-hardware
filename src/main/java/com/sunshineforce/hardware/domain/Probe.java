@@ -18,7 +18,7 @@ public class Probe extends Page implements Serializable {
     //是否运行正常
     private int isNormal;
     //实时吞吐量
-    private String regularThroughput;
+    private Long regularThroughput;
 
     public int getId() {
         return id;
@@ -56,16 +56,16 @@ public class Probe extends Page implements Serializable {
         this.isNormal = isNormal;
     }
 
-    public String getRegularThroughput() {
+    public String getProbeMac() {
+        return probeMac;
+    }
+
+    public Long getRegularThroughput() {
         return regularThroughput;
     }
 
-    public void setRegularThroughput(String regularThroughput) {
+    public void setRegularThroughput(Long regularThroughput) {
         this.regularThroughput = regularThroughput;
-    }
-
-    public String getProbeMac() {
-        return probeMac;
     }
 
     public void setProbeMac(String probeMac) {

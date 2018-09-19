@@ -2,9 +2,8 @@ package com.sunshineforce.hardware.base.enums;
 
 public enum StatusCode {
 
-    OPEN(0, "open"),
-    CLOSE(1, "close");
-
+    NORMAL(0, "normal"),
+    NOTNORMAL(1, "notNormal");
     private int id;
     private String status;
 

@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.service.IBraceletdataService;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.annotation.Resource;

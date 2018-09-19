@@ -52,22 +52,22 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
             String probeMac = probeResponse.getProbeMac();
             //long currentTime = System.currentTimeMillis();
             long currentTime = 1536885977836l;
-            long beginTime = currentTime - 60 * 1000;
+            long beginTime = currentTime - 1 * 1000;
             BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, currentTime, probeMac);
-            //计算1分钟内收到数据条数
+            //计算1s内收到数据条数
             long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
-            StringBuilder builder = new StringBuilder();
-            String regularThroughputStr = builder.append(regularThroughput).append("item/min").toString();
-            probeResponse.setRegularThroughput(regularThroughputStr);
-            if(regularThroughput > 0 && probeResponse.getStatus() == StatusCode.OPEN.getId()){
-                probeResponse.setIsNormalStr(IsNormalCode.NORMAL.getIsMormal());
+            probeResponse.setRegularThroughput(regularThroughput);
+            if(regularThroughput > 0 ){
+                probeResponse.setStatusStr(StatusCode.NORMAL.getStatus());
+                if(regularThroughput > 100){
+                    probeResponse.setIsNormalStr(IsNormalCode.HEIGHT.getIsMormal());
+                }else if(regularThroughput < 100){
+                    probeResponse.setIsNormalStr(IsNormalCode.LOW.getIsMormal());
+                }else{
+                    probeResponse.setIsNormalStr(IsNormalCode.REGULAR.getIsMormal());
+                }
             }else{
-                probeResponse.setIsNormalStr(IsNormalCode.NOTNORMAL.getIsMormal());
-            }
-            if(probeResponse.getStatus() == StatusCode.OPEN.getId()){
-                probeResponse.setStatusStr(StatusCode.OPEN.getStatus());
-            }else{
-                probeResponse.setStatusStr(StatusCode.CLOSE.getStatus());
+                probeResponse.setStatusStr(StatusCode.NOTNORMAL.getStatus());
             }
             probeResponseList.add(probeResponse);
         });
@@ -82,9 +82,9 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
 
     @Override
     public int addProbe(Probe probe) {
-        probe.setIsNormal(IsNormalCode.NORMAL.getId());
-        probe.setRegularThroughput("0 item/min");
-        probe.setStatus(StatusCode.OPEN.getId());
+        probe.setIsNormal(IsNormalCode.REGULAR.getId());
+        probe.setRegularThroughput(0l);
+        probe.setStatus(StatusCode.NORMAL.getId());
         int result = probeMapper.insert(probe);
         return result;
     }

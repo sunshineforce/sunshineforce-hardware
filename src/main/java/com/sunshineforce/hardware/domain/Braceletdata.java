@@ -1,5 +1,7 @@
 package com.sunshineforce.hardware.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.Date;
  */
 
 @Table(name = "t_braceletdata")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Braceletdata implements Serializable {
 
     private static final long serialVersionUID = -8555535280590699348L;
@@ -47,6 +50,42 @@ public class Braceletdata implements Serializable {
     private String uuid;
     //添加时间
     private Long addTime;
+    //心跳
+    private int heartBeat;
+    //点亮
+    private int battery;
+
+    public Long getUtc() {
+        return utc;
+    }
+
+    public Long getAddTime() {
+        return addTime;
+    }
+
+    public int getBattery() {
+        return battery;
+    }
+
+    public void setBattery(int battery) {
+        this.battery = battery;
+    }
+
+    public void setUtc(Long utc) {
+        this.utc = utc;
+    }
+
+    public void setAddTime(Long addTime) {
+        this.addTime = addTime;
+    }
+
+    public int getHeartBeat() {
+        return heartBeat;
+    }
+
+    public void setHeartBeat(int heartBeat) {
+        this.heartBeat = heartBeat;
+    }
 
     public String getProbeMac() {
         return probeMac;
@@ -136,14 +175,6 @@ public class Braceletdata implements Serializable {
         this.hrv = hrv;
     }
 
-    public long getUtc() {
-        return utc;
-    }
-
-    public void setUtc(long utc) {
-        this.utc = utc;
-    }
-
     public int getStaticHeartRate() {
         return staticHeartRate;
     }
@@ -152,13 +183,6 @@ public class Braceletdata implements Serializable {
         this.staticHeartRate = staticHeartRate;
     }
 
-    public long getAddTime() {
-        return addTime;
-    }
-
-    public void setAddTime(long addTime) {
-        this.addTime = addTime;
-    }
 /*   @Override
     public String toString() {
         return "User{" +

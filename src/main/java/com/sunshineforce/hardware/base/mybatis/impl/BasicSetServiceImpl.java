@@ -8,29 +8,25 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * Created with IntelliJ IDEA
- * ProjectName: ssm-maven
+ * ProjectName: sunshineforce-hardware
  * CreateUser:  lixiaopeng
- * CreateTime : 2018/6/27 16:05
+ * CreateTime : 2018/9/19 18:33
  * ModifyUser: bjlixiaopeng
- * Class Description: common paging class
+ * Class Description:
  * To change this template use File | Settings | File and Code Template
  */
-public abstract class BasicSetServiceImpl<T> implements IBasicSetMapper<T> {
 
+public abstract class BasicSetServiceImpl<T> implements IBasicSetMapper<T> {
     @Autowired
     protected Mapper<T> mapper;
-
     @Autowired
     protected MySqlMapper<T> mySqlMapper;
-
     @Autowired
     protected InMapper<T> inMapper;
-
     @Override
     public int deleteByPrimaryKey(Object key) {
         return mapper.deleteByPrimaryKey(key);
@@ -120,10 +116,7 @@ public abstract class BasicSetServiceImpl<T> implements IBasicSetMapper<T> {
         if(CollectionUtils.isEmpty(recordList)) {
             return 0;
         }
-        for(T record : recordList){
-            insert(record);
-        }
-        return 1;
+        return mySqlMapper.insertList(recordList);
     }
 
     @Override

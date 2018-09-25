@@ -1,4 +1,3 @@
-
 package com.sunshineforce.hardware.base.mybatis.impl;
 
 import com.github.abel533.mapperhelper.EntityHelper;
@@ -8,13 +7,14 @@ import org.apache.ibatis.mapping.MappedStatement;
 
 /**
  * Created with IntelliJ IDEA
- * ProjectName: ssm-maven
+ * ProjectName: sunshineforce-hardware
  * CreateUser:  lixiaopeng
- * CreateTime : 2018/6/27 16:05
+ * CreateTime : 2018/9/19 18:33
  * ModifyUser: bjlixiaopeng
- * Class Description: common paging class
+ * Class Description:
  * To change this template use File | Settings | File and Code Template
  */
+
 public class InProvider extends MapperTemplate {
 
     public InProvider(Class<?> mapperClass, MapperHelper mapperHelper) {

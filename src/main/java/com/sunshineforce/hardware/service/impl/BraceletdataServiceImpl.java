@@ -6,11 +6,9 @@ import com.sunshineforce.hardware.dao.mapper.BraceletdataMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.service.IBraceletdataService;
-import jdk.nashorn.internal.runtime.options.Options;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +34,10 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
         long endTime = Optional.ofNullable(braceletdataRequest.getEndTime()).orElse(0l);
         if(endTime != 0){
             criteria.andLessThan("addTime", endTime);
+        }
+        String proheMac = Optional.ofNullable(braceletdataRequest.getProbeMac()).orElse(null);
+        if(proheMac == null){
+            criteria.andEqualTo("probeMac", proheMac);
         }
         return braceletdataMapper.selectCountByExample(braceletdataExample);
     }

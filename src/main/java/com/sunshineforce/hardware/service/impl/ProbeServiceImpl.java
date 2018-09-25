@@ -50,15 +50,14 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
             }
 
             String probeMac = probeResponse.getProbeMac();
-            //long currentTime = System.currentTimeMillis();
-            long currentTime = 1536885977836l;
-            long beginTime = currentTime - 1 * 1000;
+            long currentTime = System.currentTimeMillis();
+            //long currentTime = 1536885977836l;
+            long beginTime = currentTime - 10 * 1000;
             BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, currentTime, probeMac);
             //计算1s内收到数据条数
             long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
             probeResponse.setRegularThroughput(regularThroughput);
             if(regularThroughput > 0 ){
-                probeResponse.setStatusStr(StatusCode.NORMAL.getStatus());
                 if(regularThroughput > 100){
                     probeResponse.setIsNormalStr(IsNormalCode.HEIGHT.getIsMormal());
                 }else if(regularThroughput < 100){
@@ -66,9 +65,14 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
                 }else{
                     probeResponse.setIsNormalStr(IsNormalCode.REGULAR.getIsMormal());
                 }
+            }
+            int status = probeResponse.getStatus();
+            if(status == StatusCode.NORMAL.getId()){
+                probeResponse.setStatusStr(StatusCode.NORMAL.getStatus());
             }else{
                 probeResponse.setStatusStr(StatusCode.NOTNORMAL.getStatus());
             }
+
             probeResponseList.add(probeResponse);
         });
         return probeResponseList;
@@ -115,6 +119,14 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         probeResponse.setFailList(failList);
         probeResponse.setSuccessList(successList);
         return probeResponse;
+    }
+
+    @Override
+    public int getProbeByMac(String mac) {
+        Probe probe = new Probe();
+        probe.setProbeMac(mac);
+        int result = probeMapper.selectCount(probe);
+        return result;
     }
 
     private Example buildExample(Probe probe){

@@ -23,4 +23,5 @@ public interface IProbeService extends IBasicSetMapper<Probe> {
     long countProbes(Probe probe);
     int addProbe(Probe probe);
     ProbeResponse deleteProbeByIds(String ids);
+    int getProbeByMac(String mac);
 }

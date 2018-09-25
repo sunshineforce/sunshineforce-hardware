@@ -75,7 +75,7 @@
 			detailView : false, //是否显示父子表
 			checkboxHeader : true,
 			maintainSelected : true, //设置为 true 在点击分页按钮或搜索按钮时，将记住checkbox的选择项
-            onRefresh : onRefresh,
+			onRefresh : onRefresh,
             columns : [ {
 				checkbox : true
 			},{
@@ -87,17 +87,15 @@
 				title : '探针mac',
                 sortable : true
 			},{
-				field : 'regularThroughput',
-				title : '实时吞吐量',
+				field : 'statusStr',
+				title : '实时状态',
                 sortable : true,
                 formatter:function(value,row,index){
 				    var style = "";
-				    if(value > 100){
-                        style = '<span style="color:red">'+value+'item/s</span>';
-					}else if(value < 100){
-                        style = '<span style="color:grey">'+value+' item/s</span>';
+				    if(value == "normal"){
+                        style = '<span style="color:greenyellow">'+value+'</span>';
 					}else{
-				        style = '<span style="color:greenyellow">'+value+' item/s</span>';
+                        style = '<span style="color:red">'+value+'</span>';
 					}
                     return style;
                 }
@@ -127,8 +125,8 @@
     }
 
     function onRefresh(params){
-        initTime();
-    }
+		initTime();
+	}
 </script>
 </head>
 
@@ -180,7 +178,7 @@
 								<li><a><i class="fa fa-desktop"></i> 探针统一网管平台 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="media_gallery.html">配置下发管理</a></li>
-                                        <li><a href="probe.html">蓝牙探针接入授权</a></li>
+										<li><a href="probe.html">蓝牙探针接入授权</a></li>
 									</ul>
 								</li>
 							</ul>

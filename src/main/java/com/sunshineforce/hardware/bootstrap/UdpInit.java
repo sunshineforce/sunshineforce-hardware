@@ -1,5 +1,6 @@
 package com.sunshineforce.hardware.bootstrap;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +34,12 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                 while(true){
                     List<Braceletdata> braceletdataList = parseUdp.parse();
                     iBraceletdataService.insertList(braceletdataList);
+//                    MessageUpload messageUpload = new MessageUpload();
+//                    try{
+//                        messageUpload.getMessage("caaa16140773" ,183);
+//                    }catch(UnknownHostException e){
+//
+//                    }
                 }
             }
         });

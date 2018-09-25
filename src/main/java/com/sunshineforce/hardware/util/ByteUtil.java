@@ -43,9 +43,27 @@ public class ByteUtil {
         return new String(bytes);
     }
 
+    public static byte[] strToByte(String str){
+        return str.getBytes();
+    }
+
+    public static String strToHex(String str){
+        String param = "";
+        for (int i = 0; i < str.length(); i++) {
+            int ch = (int) str.charAt(i);
+            String hex = Integer.toHexString(ch);
+            param = param + hex;
+        }
+        return param;
+    }
+    public static String intToHex(int num){
+        return Integer.toHexString(num);
+    }
+
     public static void main(String args[]){
-        String hexStr = "AD BA";
-        String str = ByteUtil.hexToStr(hexStr);
-        System.out.println(str);
+        int i = 12;
+        System.out.println(intToHex(i));
+        String str = "ad";
+        System.out.println(strToHex(str));
     }
 }

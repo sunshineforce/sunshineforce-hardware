@@ -8,7 +8,7 @@ import com.sunshineforce.hardware.util.ByteUtil;
 
 public class ParseBracelete {
 
-    public List<Braceletdata> parse(byte[] buf) {
+    public List<Braceletdata> parse(byte[] buf, String probeMac) {
         List<Braceletdata> braceletdataList = new ArrayList<>();
         //取长度
         byte[] lenByte = new byte[2];
@@ -27,12 +27,6 @@ public class ParseBracelete {
         System.arraycopy(buf, 9, humidityByte, 0, humidityByte.length);
         int humidity = Integer.parseInt(ByteUtil.ByteToHex(humidityByte), 16);
         System.out.println(humidity);
-
-        //取探针设备mac
-        byte[] probeMacByte = new byte[6];
-        System.arraycopy(buf, 11, probeMacByte, 0, probeMacByte.length);
-        String probeMac = ByteUtil.ByteToHex(probeMacByte);
-        System.out.println(probeMac);
 
         //终端个数
         byte[] numByte = new byte[2];

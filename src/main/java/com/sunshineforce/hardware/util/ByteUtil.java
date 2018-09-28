@@ -60,10 +60,15 @@ public class ByteUtil {
         return Integer.toHexString(num);
     }
 
+    public static int hexToInt(String hex){
+        int num = Integer.parseInt(hex, 16) - 256;
+        System.out.println(num);
+        num = (~(Math.abs(num))) + 1;
+        return Math.abs(num);
+    }
+
     public static void main(String args[]){
-        int i = 12;
-        System.out.println(intToHex(i));
-        String str = "ad";
-        System.out.println(strToHex(str));
+        int num = hexToInt("ab");
+        System.out.println(num);
     }
 }

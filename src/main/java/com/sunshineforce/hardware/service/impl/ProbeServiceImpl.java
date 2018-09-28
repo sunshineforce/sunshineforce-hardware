@@ -125,8 +125,7 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
     public int getProbeByMac(String mac) {
         Probe probe = new Probe();
         probe.setProbeMac(mac);
-        int result = probeMapper.selectCount(probe);
-        return result;
+        return probeMapper.selectCountByExample(buildExample(probe));
     }
 
     private Example buildExample(Probe probe){

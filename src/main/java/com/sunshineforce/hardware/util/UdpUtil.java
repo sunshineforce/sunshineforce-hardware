@@ -1,11 +1,7 @@
 package com.sunshineforce.hardware.util;
 
-import com.sunshineforce.hardware.domain.Braceletdata;
-
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UdpUtil {
 
@@ -41,6 +37,10 @@ public class UdpUtil {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length); // 1024
             //调用udp的服务接收数据
             socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
+            String ip = datagramPacket.getAddress().getHostAddress();
+            int port2 = datagramPacket.getPort();
+            System.out.println(ip);
+            System.out.println(port2);
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (IOException e) {

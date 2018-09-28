@@ -9,6 +9,7 @@ import com.sunshineforce.hardware.util.ByteUtil;
 public class ParseBracelete {
 
     public List<Braceletdata> parse(byte[] buf, String probeMac) {
+        System.out.println("buf:" + new String(buf));
         List<Braceletdata> braceletdataList = new ArrayList<>();
         //取长度
         byte[] lenByte = new byte[2];
@@ -34,7 +35,7 @@ public class ParseBracelete {
         int num = Integer.parseInt(ByteUtil.ByteToHex(numByte), 16);
         System.out.println(num);
 
-        //取数据长度，12-温度-湿度-蓝牙设备mac-终端-CRC
+        //取数据长度，length-温度-湿度-蓝牙设备mac-终端-CRC
         int dataLen = length - 2 - 2 - 6 - 2;
         System.out.println(dataLen);
         //取所有设备发送的数据
@@ -84,7 +85,7 @@ public class ParseBracelete {
         byte[] crcByte = new byte[2];
         System.arraycopy(buf, timeStartPos - 3, crcByte, 0, crcByte.length);
         int crc = Integer.parseInt(ByteUtil.ByteToHex(crcByte), 16);
-        System.out.println(crc);
+        System.out.println("crc：" + crc);
 
         return braceletdataList;
     }
@@ -117,6 +118,10 @@ public class ParseBracelete {
         System.arraycopy(broadcastValueByte, 8, flagByte, 0, flagByte.length);
         String flag = ByteUtil.ByteToHex(flagByte);
         System.out.println("flag:    " + flag);
+        if (!flag.toUpperCase().equals("FF")) {
+            System.out.println("flag err");
+            return null;
+        }
 
         //取packageId
         byte[] packageByte = new byte[1];
@@ -234,12 +239,12 @@ public class ParseBracelete {
         byte[] nullByte = new byte[length + 6 - 25];
         System.arraycopy(broadcastValueByte, 26, nullByte, 0, nullByte.length);
         String nullStr = ByteUtil.ByteToHex(nullByte);
-        System.out.println(nullStr);
+        System.out.println("预留：" + nullStr);
 
         //电池
         byte[] batteryByte = new byte[1];
         System.arraycopy(broadcastValueByte, length + 9 - 2, batteryByte, 0, batteryByte.length);
-        int battery = Integer.parseInt(ByteUtil.ByteToHex(batteryByte), 16);
+        int battery = ByteUtil.hexToInt(ByteUtil.ByteToHex(batteryByte));
         braceletdata.setBattery(battery);
         System.out.println("battery："+battery);
         System.out.println("battery："+ByteUtil.ByteToHex(batteryByte));

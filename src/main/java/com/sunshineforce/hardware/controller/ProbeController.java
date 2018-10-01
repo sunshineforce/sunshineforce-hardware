@@ -76,4 +76,14 @@ public class ProbeController {
 	public String getTime(){
 		return TimeUtil.getTimeString(new Date(), TimeUtil.dataSecondString);
 	}
+
+//	@RequestMapping("deleteProbeByIds")
+//	@ResponseBody
+//	public Probe getProbe(int id){
+//		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+//		Probe probe = iProbeService.getProbe(id);
+//		responseData.setData(probeResponse);
+//		return responseData;
+//	}
+
 }

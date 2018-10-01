@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA
@@ -34,12 +33,12 @@ public class Braceletdata implements Serializable {
     private String active;
     //睡眠状态
     private String sleep;
-    //舒张压
-    private int diastolicPressure;
-    //收缩压
-    private int systolicPressure;
-    //血氧
-    private int bloodOxygen;
+    //跳绳模式
+    private int skipModel;
+    //跳绳数量
+    private int skipNum;
+    //跳绳时长
+    private int skipTime;
     //hrv
     private int hrv;
     //上传数据utc
@@ -143,28 +142,28 @@ public class Braceletdata implements Serializable {
         this.sleep = sleep;
     }
 
-    public int getDiastolicPressure() {
-        return diastolicPressure;
+    public int getSkipModel() {
+        return skipModel;
     }
 
-    public void setDiastolicPressure(int diastolicPressure) {
-        this.diastolicPressure = diastolicPressure;
+    public void setSkipModel(int skipModel) {
+        this.skipModel = skipModel;
     }
 
-    public int getSystolicPressure() {
-        return systolicPressure;
+    public int getSkipNum() {
+        return skipNum;
     }
 
-    public void setSystolicPressure(int systolicPressure) {
-        this.systolicPressure = systolicPressure;
+    public void setSkipNum(int skipNum) {
+        this.skipNum = skipNum;
     }
 
-    public int getBloodOxygen() {
-        return bloodOxygen;
+    public int getSkipTime() {
+        return skipTime;
     }
 
-    public void setBloodOxygen(int bloodOxygen) {
-        this.bloodOxygen = bloodOxygen;
+    public void setSkipTime(int skipTime) {
+        this.skipTime = skipTime;
     }
 
     public int getHrv() {

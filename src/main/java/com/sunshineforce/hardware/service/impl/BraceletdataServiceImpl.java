@@ -6,6 +6,7 @@ import com.sunshineforce.hardware.dao.mapper.BraceletdataMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.service.IBraceletdataService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> implements IBraceletdataService {
 
     @Autowired
@@ -36,7 +38,8 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
             criteria.andLessThan("addTime", endTime);
         }
         String proheMac = Optional.ofNullable(braceletdataRequest.getProbeMac()).orElse(null);
-        if(proheMac == null){
+        System.out.println("----------"+proheMac);
+        if(proheMac != null){
             criteria.andEqualTo("probeMac", proheMac);
         }
         return braceletdataMapper.selectCountByExample(braceletdataExample);

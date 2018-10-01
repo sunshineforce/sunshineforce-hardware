@@ -10,12 +10,14 @@ import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.service.IProbeService;
 import com.sunshineforce.hardware.util.ByteUtil;
 import com.sunshineforce.hardware.util.UdpUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
 
+@Slf4j
 public class UdpInit implements InitializingBean, ServletContextAware{
 
     @Autowired
@@ -40,7 +42,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
         singleThreadPool.execute(new Runnable(){
             @Override
             public void run() {
-                System.out.println("222222222222222222222222");
+                log.info("-------------开始轮训获取udp包------------");
                 while(true){
                     List<Braceletdata> braceletdataList = new ArrayList<>();
                     byte[] buf = UdpUtil.getUdpResponse(3333);
@@ -48,7 +50,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                     byte[] header = new byte[2];
                     System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节
                     if(!checkHeqader(header)){
-                        System.out.println("header false");
+                        log.info("header false");
                     }else{
                         //取探针设备mac
                         byte[] probeMacByte = new byte[6];
@@ -57,7 +59,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                         System.out.println(probeMac);
                         int count = iProbeService.getProbeByMac(probeMac);
                         if(count <= 0){
-                            System.out.println("-------------------the probe is not authorize,probeMac is : " + probeMac);
+                            log.info("-------------------the probe is not authorize,probeMac is : " + probeMac);
                         }else{
                             byte[] typeByte = new byte[1];
                             System.arraycopy(buf, 4, typeByte, 0, typeByte.length); //取消息类型
@@ -66,9 +68,9 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                                 braceletdataList = parseBracelete.parse(buf, probeMac);
                                 braceletdataList.stream().forEach(braceletdata -> braceletdataMapper.insert(braceletdata));
                             }else if(type == 2){
-                                System.out.println("-------------------type heart beat");
+                                log.info("-------------------type heart beat");
                             }else{
-                                System.out.println("type error");
+                                log.info("type error");
                             }
                         }
                     }

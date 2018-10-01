@@ -1,11 +1,13 @@
 package com.sunshineforce.hardware.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sunshineforce.hardware.domain.request.Page;
 
 import javax.persistence.Table;
 import java.io.Serializable;
 
 @Table(name = "t_probe")
+@JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
 public class Probe extends Page implements Serializable {
     private static final long serialVersionUID = -8555535280590699347L;
 

@@ -11,6 +11,8 @@ import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.domain.response.ProbeResponse;
 import com.sunshineforce.hardware.service.IBraceletdataService;
 import com.sunshineforce.hardware.service.IProbeService;
+import com.sunshineforce.hardware.util.TimeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IProbeService {
 
     @Autowired
@@ -126,6 +127,94 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         Probe probe = new Probe();
         probe.setProbeMac(mac);
         return probeMapper.selectCountByExample(buildExample(probe));
+    }
+
+//    以1分钟为单位查询吞吐量
+    @Override
+    public ProbeResponse getProbeThroughtoutListByMac(String probeMac) {
+        ProbeResponse probeResponse = new ProbeResponse();
+        List<List<String>> result = new ArrayList<>();
+        long currentTime = 1538236323709l;
+        long regularTime = currentTime;
+        while(regularTime >= currentTime - 1000 * 3600 * 24){
+            long beforeTime = regularTime - 1000 * 60;
+            BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beforeTime, regularTime, probeMac);
+            //计算1min内收到数据条数
+            long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
+            List<String> throughoutList = new ArrayList<>();
+            throughoutList.add(TimeUtil.getTimeString(new Date(regularTime), TimeUtil.dataSecondString));
+            throughoutList.add(regularThroughput + "");
+            result.add(throughoutList);
+            regularTime = beforeTime;
+        }
+        Collections.reverse(result);
+        regularTime = currentTime - 3600 * 1000;
+        probeResponse.setThroughoutList(result);
+        probeResponse.setRegularTime(TimeUtil.getTimeString(new Date(regularTime), TimeUtil.dataSecondString));
+        return probeResponse;
+    }
+
+    @Override
+    public ProbeResponse getProbeThroughtoutListByTime(String endTime){
+        Probe probe = new Probe();
+        List<String> probeMacList = new ArrayList<>();
+        List<Map<String, Object>> probeValueList = new ArrayList<>();
+        Example probeExample = buildExample(probe);
+        List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        probeList.stream().forEach(probeObj -> {
+            try{
+                long beginTime = Long.parseLong(endTime) - 60 * 1000;
+                BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, Long.parseLong(endTime), probeObj.getProbeMac());
+                //计算1分钟内收到数据条数
+                long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
+                probeMacList.add(probeObj.getProbeMac());
+                Map<String, Object> map = new HashMap<>();
+                map.put("value", regularThroughput);
+                map.put("name", probeObj.getProbeMac());
+                probeValueList.add(map);
+            }catch(Exception e){
+                log.info(e.getMessage());
+            }
+        });
+        ProbeResponse probeResponse = new ProbeResponse();
+        probeResponse.setProbeMacList(probeMacList);
+        probeResponse.setProbeValueList(probeValueList);
+        probeResponse.setRegularTime(TimeUtil.getTimeString(new Date(Long.parseLong(endTime)), TimeUtil.dataMinuteString));
+        return probeResponse;
+    }
+
+    @Override
+    public ProbeResponse getProbeThroughtoutListByTimeWithMac(String beginTime, String endTime) {
+        Probe probe = new Probe();
+        List<String> probeMacList = new ArrayList<>();
+        List<Long> probeThroughtoutList = new ArrayList<>();
+        Example probeExample = buildExample(probe);
+        List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        probeList.stream().forEach(probeObj -> {
+            try{
+                BraceletdataRequest braceletdataRequest = new BraceletdataRequest(Long.parseLong(beginTime), Long.parseLong(endTime), probeObj.getProbeMac());
+                //计算收到数据条数
+                long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
+                probeMacList.add(probeObj.getProbeMac());
+                probeThroughtoutList.add(regularThroughput);
+            }catch(Exception e){
+                log.info(e.getMessage());
+            }
+        });
+        ProbeResponse probeResponse = new ProbeResponse();
+        probeResponse.setProbeMacList(probeMacList);
+        probeResponse.setProbeThroughtoutList(probeThroughtoutList);
+        return probeResponse;
+    }
+
+    @Override
+    public List<String> initProbe() {
+        Probe probe = new Probe();
+        probe.setStatus(StatusCode.NORMAL.getId());
+        Example probeExample = buildExample(probe);
+        List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        List<String> list = probeList.stream().map(obj -> obj.getProbeMac()).collect(Collectors.toList());
+        return list;
     }
 
     private Example buildExample(Probe probe){

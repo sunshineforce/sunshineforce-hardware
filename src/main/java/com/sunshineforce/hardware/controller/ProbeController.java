@@ -24,6 +24,17 @@ public class ProbeController {
 	@Autowired
 	private IProbeService iProbeService;
 
+	@RequestMapping("initList")
+	@ResponseBody
+	public ResponseData initProbe(){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		List<String> list = iProbeService.initProbe();
+		ProbeResponse probeResponse = new ProbeResponse();
+		probeResponse.setProbeMacList(list);
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
 	@RequestMapping("getList")
 	@ResponseBody
 	public ResponseData getList(@RequestBody Map<String, Object> request, @RequestParam(required = false, defaultValue = "1") int currentPage, @RequestParam(required = false, defaultValue = "10") int pageSize){
@@ -77,13 +88,32 @@ public class ProbeController {
 		return TimeUtil.getTimeString(new Date(), TimeUtil.dataSecondString);
 	}
 
-//	@RequestMapping("deleteProbeByIds")
-//	@ResponseBody
-//	public Probe getProbe(int id){
-//		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
-//		Probe probe = iProbeService.getProbe(id);
-//		responseData.setData(probeResponse);
-//		return responseData;
-//	}
+	@RequestMapping("getProbeThroughtoutListByMac")
+	@ResponseBody
+	public ResponseData getProbeThroughtoutListById(String probeMac){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		ProbeResponse probeResponse = iProbeService.getProbeThroughtoutListByMac(probeMac);
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
+	@RequestMapping("getProbeThroughtoutListByTime")
+	@ResponseBody
+	public ResponseData getProbeThroughtoutListByTime(String endTime){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		ProbeResponse probeResponse = iProbeService.getProbeThroughtoutListByTime(endTime);
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
+	@RequestMapping("getProbeThroughtoutListByTimeWithMac")
+	@ResponseBody
+	public ResponseData getProbeThroughtoutListByTimeWithMac(String beginTime, String endTime){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		ProbeResponse probeResponse = iProbeService.getProbeThroughtoutListByTimeWithMac(beginTime, endTime);
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
 
 }

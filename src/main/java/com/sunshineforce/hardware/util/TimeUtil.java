@@ -6,8 +6,10 @@ import java.util.Date;
 
 public class TimeUtil {
     public static String dataSecondString = "yyyy-MM-dd HH:mm:ss";
+    public static String dataMinuteString = "yyyy-MM-dd HH:mm";
     public static String dataMonthStringNotSign = "yyyyMM";
     public static String dataSecondStringLine = "yyyy/MM/dd HH:mm:ss";
+    public static String dataSecondNoDayStringLine = "HH:mm:ss";
 
     public static String getTimeString(Date date, String dataFormatString){
         return new SimpleDateFormat(dataFormatString).format(date);

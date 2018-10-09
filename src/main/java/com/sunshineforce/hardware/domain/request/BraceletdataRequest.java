@@ -14,6 +14,14 @@ public class BraceletdataRequest extends Braceletdata {
         this.probeMac = probeMac;
     }
 
+    public BraceletdataRequest(Long beginTime, Long endTime) {
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+    }
+
+    public BraceletdataRequest() {
+    }
+
     public Long getBeginTime() {
         return beginTime;
     }

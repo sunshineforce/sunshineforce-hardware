@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sunshineforce.hardware.domain.Probe;
 
 import java.util.List;
+import java.util.Map;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.NON_NULL)
 public class ProbeResponse extends Probe{
@@ -18,6 +19,56 @@ public class ProbeResponse extends Probe{
     private String isNormalStr;
 
     private List<String> failList;
+
+    private List<List<String>> throughoutList;
+
+    private List<String> probeMacList;
+
+    private List<Long> probeThroughtoutList;
+
+    public List<Long> getProbeThroughtoutList() {
+        return probeThroughtoutList;
+    }
+
+    public void setProbeThroughtoutList(List<Long> probeThroughtoutList) {
+        this.probeThroughtoutList = probeThroughtoutList;
+    }
+
+    private List<Map<String, Object>> probeValueList;
+
+    public List<Map<String, Object>> getProbeValueList() {
+        return probeValueList;
+    }
+
+    public void setProbeValueList(List<Map<String, Object>> probeValueList) {
+        this.probeValueList = probeValueList;
+    }
+
+    public List<String> getProbeMacList() {
+        return probeMacList;
+    }
+
+    public void setProbeMacList(List<String> probeMacList) {
+        this.probeMacList = probeMacList;
+    }
+
+    private String regularTime;
+
+    public String getRegularTime() {
+        return regularTime;
+    }
+
+    public void setRegularTime(String regularTime) {
+        this.regularTime = regularTime;
+    }
+
+    public List<List<String>> getThroughoutList() {
+        return throughoutList;
+    }
+
+    public void setThroughoutList(List<List<String>> throughoutList) {
+        this.throughoutList = throughoutList;
+    }
 
     public List<String> getFailList() {
         return failList;

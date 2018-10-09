@@ -24,4 +24,8 @@ public interface IProbeService extends IBasicSetMapper<Probe> {
     int addProbe(Probe probe);
     ProbeResponse deleteProbeByIds(String ids);
     int getProbeByMac(String mac);
+    ProbeResponse getProbeThroughtoutListByMac(String probeMac);
+    ProbeResponse getProbeThroughtoutListByTime(String endTime);
+    ProbeResponse getProbeThroughtoutListByTimeWithMac(String beginTime, String endTime);
+    List<String> initProbe();
 }

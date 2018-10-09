@@ -30,11 +30,11 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
         Example braceletdataExample = new Example(BraceletdataRequest.class);
         Example.Criteria criteria = braceletdataExample.createCriteria();
         long beginTime = Optional.ofNullable(braceletdataRequest.getBeginTime()).orElse(0l);
-        if(beginTime != 0){
+        if(beginTime != 0 && beginTime > 0){
             criteria.andGreaterThan("addTime", beginTime);
         }
         long endTime = Optional.ofNullable(braceletdataRequest.getEndTime()).orElse(0l);
-        if(endTime != 0){
+        if(endTime != 0 && endTime > 0){
             criteria.andLessThan("addTime", endTime);
         }
         String proheMac = Optional.ofNullable(braceletdataRequest.getProbeMac()).orElse(null);

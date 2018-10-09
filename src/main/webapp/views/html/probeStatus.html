@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Gentelella Alela! | </title>
+	<title>探针状态 </title>
 
 	<!-- Bootstrap -->
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -34,7 +34,30 @@
 		//初始化Table
         initTable();
         initTime();
+        getLoginUser();
 	});
+
+    function getLoginUser(){
+        $.ajax({
+            type : 'POST',
+            dataType : "json",
+            url : "../../user/getLoginUser",
+            success : function(data) {
+                $("#username_login").html(data);
+            }
+        });
+    }
+
+    function logout(){
+        $.ajax({
+            type : 'POST',
+            dataType : "json",
+            url : "../../user/logout",
+            success : function(data) {
+                location.href = "../../login.html";
+            }
+        });
+    }
 
 	function initTime(){
         $.ajax({
@@ -137,7 +160,7 @@
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
 						<a href="index.html" class="site_title"><i class="fa fa-paw"></i>
-							<span>探针后台</span></a>
+							<span>探针管理系统</span></a>
 					</div>
 
 					<div class="clearfix"></div>
@@ -145,8 +168,7 @@
 					<!-- menu profile quick info -->
 					<div class="profile clearfix">
 						<div class="profile_info">
-							<span>欢迎,</span><span id = "role_login"></span>
-							<h2 id = "username_login"></h2>
+							<span>欢迎,</span><span><h2 id = "username_login"></h2></span>
 						</div>
 					</div>
 
@@ -155,7 +177,6 @@
 					<!-- sidebar menu -->
 					<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 						<div class="menu_section">
-							<h3>General</h3>
 							<ul class="nav side-menu">
 								<li><a><i class="fa fa-home"></i> 首页 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
@@ -179,6 +200,11 @@
 									<ul class="nav child_menu">
 										<li><a href="media_gallery.html">配置下发管理</a></li>
 										<li><a href="probe.html">蓝牙探针接入授权</a></li>
+									</ul>
+								</li>
+								<li><a><i class="fa fa-table"></i> 手环数据展示 <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="braceletdata.html">手环数据展示</a></li>
 									</ul>
 								</li>
 							</ul>

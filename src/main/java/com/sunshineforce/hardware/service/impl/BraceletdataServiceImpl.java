@@ -1,12 +1,16 @@
 package com.sunshineforce.hardware.service.impl;
 
 import com.github.abel533.entity.Example;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sunshineforce.hardware.base.mybatis.impl.BasicSetServiceImpl;
 import com.sunshineforce.hardware.dao.mapper.BraceletdataMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
+import com.sunshineforce.hardware.domain.Probe;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.service.IBraceletdataService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +25,21 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
     private BraceletdataMapper braceletdataMapper;
 
     @Override
-    public List<Braceletdata> selectBraceletdatas() {
-        return null;
+    public List<Braceletdata> selectBraceletdatas(BraceletdataRequest braceletdataRequest) {
+        Example braceletdataExample = buildExample(braceletdataRequest);
+        PageHelper.startPage(braceletdataRequest.getCurrentPage(), braceletdataRequest.getPageSize(), braceletdataRequest.getOrderName() + " " + braceletdataRequest.getOrderType());
+        List<Braceletdata> braceletdataList = braceletdataMapper.selectByExample(braceletdataExample);
+        PageInfo<Braceletdata> braceletdataPageInfo = new PageInfo<Braceletdata>(braceletdataList);
+        return braceletdataPageInfo.getList();
     }
 
     @Override
     public long countBraceletdata(BraceletdataRequest braceletdataRequest) {
+        Example braceletdataExample = buildExample(braceletdataRequest);
+        return braceletdataMapper.selectCountByExample(braceletdataExample);
+    }
+
+    private Example buildExample(BraceletdataRequest braceletdataRequest){
         Example braceletdataExample = new Example(BraceletdataRequest.class);
         Example.Criteria criteria = braceletdataExample.createCriteria();
         long beginTime = Optional.ofNullable(braceletdataRequest.getBeginTime()).orElse(0l);
@@ -42,6 +55,6 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
         if(proheMac != null){
             criteria.andEqualTo("probeMac", proheMac);
         }
-        return braceletdataMapper.selectCountByExample(braceletdataExample);
+        return braceletdataExample;
     }
 }

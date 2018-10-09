@@ -18,6 +18,6 @@ import java.util.List;
 
 
 public interface IBraceletdataService extends IBasicSetMapper<Braceletdata> {
-    List<Braceletdata> selectBraceletdatas();
+    List<Braceletdata> selectBraceletdatas(BraceletdataRequest braceletdataRequest);
     long countBraceletdata(BraceletdataRequest braceletdataRequest);
 }

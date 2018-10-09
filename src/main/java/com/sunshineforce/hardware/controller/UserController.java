@@ -1,62 +1,71 @@
 package com.sunshineforce.hardware.controller;
 
-import com.sunshineforce.hardware.base.Constants;
-import com.sunshineforce.hardware.base.enums.ErrorCode;
-import com.sunshineforce.hardware.base.utils.ResponseData;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.sunshineforce.hardware.domain.User;
 import com.sunshineforce.hardware.service.IUserService;
-import org.apache.commons.lang3.StringUtils;
+import com.sunshineforce.hardware.util.RandomValidateCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
- * Created with IntelliJ IDEA
- * ProjectName: sunshineforce-hardware
- * CreateUser:  lixiaopeng
- * CreateTime : 2018/9/19 18:30
- * ModifyUser: bjlixiaopeng
- * Class Description:
- * To change this template use File | Settings | File and Code Template
+ * @author liujie
+ * @version 创建时间：2017年8月28日 下午5:09:33
+ * 类说明  登录类
  */
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("user")
 public class UserController {
 
     @Autowired
     private IUserService userService;
 
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
+    @RequestMapping("getRandomValidateCode")
     @ResponseBody
-    public ResponseData login(@RequestBody User loginParams,HttpServletRequest request){
-        if (checkParams(loginParams)) {
-            return ResponseData.ResultFactory.makeErrorResult(ErrorCode.ILLEGAL_PARAM.getCode(),ErrorCode.ILLEGAL_PARAM.getMessage());
+    public void getRandomValidateCode(HttpServletRequest request, HttpServletResponse response){
+        response.setHeader("Pragma", "No-cache");//设置响应头信息，告诉浏览器不要缓存此内容
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expire", 0);
+        RandomValidateCodeUtil randomValidateCode = new RandomValidateCodeUtil();
+        try {
+            String randomValidateCodeStr = randomValidateCode.getRandcode(request, response);//输出图片方法
+            request.getSession().setAttribute("randomValidateCodeStr", randomValidateCodeStr);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        User user = userService.queryUserByName(loginParams.getUsername(), loginParams.getPassword());
-        if (user == null) {
-            return ResponseData.ResultFactory.makeErrorResult(ErrorCode.UNAUTHORIZED.getCode(),ErrorCode.UNAUTHORIZED.getMessage());
-        }else {
-            request.getSession().setAttribute(Constants.LOGIN_USER,user);
-        }
-        return ResponseData.ResultFactory.makeOKResult();
     }
 
-    @RequestMapping(value = "/loginOut",method = RequestMethod.POST)
     @ResponseBody
-    public void loginOut(HttpServletRequest request){
-        request.getSession().setAttribute(Constants.LOGIN_USER,null);
+    @RequestMapping("login")
+    public int loginIn(User user, String login_randomValidateCode, HttpServletRequest request){
+        String randomValidateCodeStr = (String) request.getSession().getAttribute("randomValidateCodeStr");
+        if(randomValidateCodeStr.compareToIgnoreCase(login_randomValidateCode) != 0){
+            return -1;
+        }
+        User loginUser = userService.queryUserByName(user.getUsername(), user.getPassword());
+        if(loginUser != null){
+            request.getSession().setAttribute("username", loginUser.getUsername());
+            return 1;
+        }else{
+            return 0;
+        }
     }
 
-    private boolean checkParams(User user){
-        if (user == null || StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getPassword())) {
-            return false;
-        }
-        return true;
+    @ResponseBody
+    @RequestMapping("getLoginUser")
+    public String getLoginUser(HttpServletRequest request){
+        return request.getSession().getAttribute("username").toString();
+    }
+
+    @ResponseBody
+    @RequestMapping("logout")
+    public int logout(HttpServletRequest request){
+        request.getSession().removeAttribute("username");
+        return 1;
     }
 }

@@ -2,6 +2,7 @@ package com.sunshineforce.hardware.service.impl;
 
 import com.github.abel533.entity.Example;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sunshineforce.hardware.base.enums.IsNormalCode;
 import com.sunshineforce.hardware.base.enums.StatusCode;
 import com.sunshineforce.hardware.base.mybatis.impl.BasicSetServiceImpl;
@@ -39,8 +40,9 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         Example probeExample = buildExample(probe);
         PageHelper.startPage(probe.getCurrentPage(), probe.getPageSize(), probe.getOrderName() + " " + probe.getOrderType());
         List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        PageInfo<Probe> probePageInfo = new PageInfo<>(probeList);
         //计算吞吐量，每分钟收到的数据条数
-        probeList.stream().forEach(probeObj -> {
+        probePageInfo.getList().stream().forEach(probeObj -> {
             ProbeResponse probeResponse = new ProbeResponse();
             try{
                 BeanUtils.copyProperties(probeResponse, probeObj);
@@ -220,6 +222,7 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
     private Example buildExample(Probe probe){
         Example probeExample = new Example(Probe.class);
         Example.Criteria criteria = probeExample.createCriteria();
+        probeExample.setOrderByClause(probe.getOrderName() + " " + probe.getOrderType());
         String location = Optional.ofNullable(probe.getLocation()).orElse(null);
         if(location != null){
             criteria.andLike("location", "%" + location + "%");

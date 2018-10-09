@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>探针管理 </title>
+	<title>探针数据展示 </title>
 
 	<!-- Bootstrap -->
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -58,25 +58,10 @@
         });
     }
 
-	function initData(){
-        $.ajax({
-            type : 'post',
-            dataType : "json",
-            url : "../../probe/getList",
-            data : {
-                "probeMac" : $("#search_probeMac").val(),
-                "location" : $("#search_location").val()
-            },
-            success : function(data) {
-                initTable(data.data.probeResponseList);
-            }
-        });
-    }
-
 	//初始化Table
 	function initTable() {
-		$('#probeTable').bootstrapTable({
-			url : "../../probe/getList", //请求后台的URL（*）
+		$('#braceletdataTable').bootstrapTable({
+			url : "../../bracelet/getList", //请求后台的URL（*）
             responseHandler:function (res) {
                 return res.data;
             },
@@ -112,22 +97,38 @@
 				title : '探针mac',
                 sortable : true
 			},{
-				field : 'statusStr',
-				title : '状态',
+				field : 'braceletMac',
+				title : '手环mac',
                 sortable : true
 			},{
-				field : 'location',
-				title : '位置',
+                field : 'uuid',
+                title : '手环uuid',
+                sortable : true
+            },{
+				field : 'heartRate',
+				title : '心率',
                 sortable : true
 			},{
-				field : 'isNormalStr',
-				title : '是否运行正常',
+				field : 'step',
+				title : '步数',
                 sortable : true
 			},{
-				field : 'regularThroughput',
-				title : '实时吞吐量',
+				field : 'utc',
+				title : '手环utc时间',
                 sortable : true
-			}],
+			},{
+                field : 'skipModel',
+                title : '跳绳模式',
+                sortable : true
+            },{
+                field : 'skipNum',
+                title : '跳绳数量',
+                sortable : true
+            },{
+                field : 'skipTime',
+                title : '跳绳时间',
+                sortable : true
+            }],
 		});
 	};
 
@@ -143,66 +144,20 @@
 	
 	function search() {
 		var probeMac = $("#search_probeMac").val();
-		var location = $("#search_location").val();
-        var statusStr = $("#search_statusStr").val();
-		
+		var braceletMac = $("#search_braceletMac").val();
+        var uuid = $("#search_uuid").val();
+        var skipModel = $("#search_skipModel").val();
+
 		$('#probeTable').bootstrapTable('refresh', {
 			query : { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
 				probeMac : probeMac,
-                location : location,
-                statusStr : statusStr
+                braceletMac : braceletMac,
+                uuid : uuid,
+                skipModel : skipModel
 			}
 		});
 	}
-	
-	function add() {
-		$("#modal-container-985684").modal();
-	}
-	
-	function save(){
-		$.ajax({
-			type : 'post',
-			dataType : "json",
-			url : "../../probe/addProbe",
-			data : {
-				"probeMac" : $("#add_probeMac").val(),
-				"location" : $("#add_location").val()
-			},
-			success : function(data) {
-				$("#modal-container-985684").modal("toggle");
-				window.location.reload();
-			}
-		});
-	}
-	
-	function del() {
-		$("#modal-container-770346").modal();
-		var allSelections = $('#probeTable') .bootstrapTable('getAllSelections');
-		var ids = "";
-		$.each(allSelections, function(i, selection) {
-			if(i == 0){
-				ids = selection["id"];
-			}else{
-				ids = ids + "," + selection["id"];
-			}
-		});
-		$("#del").click(function(){
-			$.ajax({
-				type : 'POST',
-				dataType : "json",
-				url : "../../probe/deleteProbeByIds",
-				data : {
-					"ids" : ids
-				},
-				success : function(data) {
-					alert("删除成功");
-					$("#modal-container-770346").modal("toggle");
-					console.log(data);
-					window.location.reload();
-				}
-			});
-		});
-	}
+
 </script>
 </head>
 
@@ -255,11 +210,12 @@
 										<li><a href="probe.html">蓝牙探针接入授权</a></li>
 									</ul>
 								</li>
-                                <li><a><i class="fa fa-table"></i> 手环数据展示 <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="braceletdata.html">手环数据展示</a></li>
-                                    </ul>
-                                </li>
+
+								<li><a><i class="fa fa-table"></i> 手环数据展示 <span class="fa fa-chevron-down"></span></a>
+									<ul class="nav child_menu">
+										<li><a href="braceletdata.html">手环数据展示</a></li>
+									</ul>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -304,9 +260,17 @@
 										<div class="col-sm-1">
 											<input type="text" class="form-control" id="search_probeMac">
 										</div>
-										<label class="control-label col-sm-1" for="search_location">探针位置</label>
+										<label class="control-label col-sm-1" for="search_braceletMac">手环mac</label>
 										<div class="col-sm-1">
-											<input type="text" class="form-control" id="search_location">
+											<input type="text" class="form-control" id="search_braceletMac">
+										</div>
+										<label class="control-label col-sm-1" for="search_uuid">手环uuid</label>
+										<div class="col-sm-1">
+											<input type="text" class="form-control" id="search_uuid">
+										</div>
+										<label class="control-label col-sm-1" for="search_skipModel">跳绳模式</label>
+										<div class="col-sm-1">
+											<input type="text" class="form-control" id="search_skipModel">
 										</div>
 										<div class="col-sm-4" style="text-align: left;">
 											<button type="button" style="margin-left: 50px"
@@ -319,15 +283,7 @@
 							<div class="x_panel">
 								<div class="x_title">
 									<div class="x_content">
-										<div id="toolbar" class="btn-group">
-											<button id="btn_add" type="button" class="btn btn-default" onclick = "add()">
-												<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-											</button>
-											<button id="btn_delete" type="button" class="btn btn-default" onclick = "del()">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-											</button>
-										</div>
-										<table id="probeTable"></table>
+										<table id="braceletdataTable"></table>
 									</div>
 								</div>
 							</div>
@@ -345,81 +301,6 @@
 				<div class="clearfix"></div>
 			</footer>
 			<!-- /footer content -->
-		</div>
-	</div>
-
-	<!-- 删除窗体 -->
-	<div class="container">
-		<div class="row clearfix">
-			<div class="col-md-12 column">
-				<div class="modal fade" id="modal-container-770346" role="dialog"
-					aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true">×</button>
-								<h4 class="modal-title" id="myModalLabel">删除！</h4>
-							</div>
-							<div class="modal-body">
-								<p id="delete">确认删除？</p>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">关闭</button>
-								<button type="button" class="btn btn-primary" id="del">确认</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<!-- 新增窗体 -->
-	<div class="container">
-		<div class="row clearfix">
-			<div class="col-md-12 column">
-				<div class="modal fade" id="modal-container-985684" role="dialog"
-					aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="x_content" style = "width:600px;margin-left:700px">
-                    	<form class="form-horizontal form-label-center" novalidate>
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal"
-										aria-hidden="true">×</button>
-									<h4 class="modal-title" id="myaddModalLabel">新增探针</h4>
-								</div>
-								<div class="modal-body">
-									<div class="item form-group">
-										<label for="add_probeMac" class="control-label col-md-3">探针mac </label>
-										<div class="col-md-6 col-sm-6 col-xs-12">
-											<input id="add_probeMac" type="text" name="add_probeMac" class="form-control col-md-7 col-xs-12" required="required">
-										</div>
-									</div>
-									<!--<div class="item form-group">-->
-										<!--<label for="add_location" class="control-label col-md-3">探针位置 </label>-->
-										<!--<div class="col-md-6 col-sm-6 col-xs-12">-->
-											<!--<input id="add_location" type="number" name="add_location" class="form-control col-md-7 col-xs-12" required="required">-->
-										<!--</div>-->
-									<!--</div>-->
-                                    <div class="item form-group">
-                                        <label for="add_location" class="control-label col-md-3">探针位置 </label>
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input id="add_location" type="text" name="add_location" class="form-control col-md-7 col-xs-12" required="required">
-                                        </div>
-                                    </div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default"
-										data-dismiss="modal">关闭</button>
-									<button type="submit" class="btn btn-primary" onclick = "save()">保存</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
     <!-- FastClick -->

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Gentelella Alela! | </title>
+    <title>首页 </title>
 
     <!-- Bootstrap -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -36,28 +36,375 @@
     <script src="../js/bootstrap-datetimepicker.js"></script>
     <script src="../js/bootstrap-datetimepicker.zh-CN.js"></script>
     <script src="../js/echarts.common.min.js"></script>
-    <script src="../js/vue.min.js"></script>
-    <script src="../js/vue-resource.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            initList();
+            initDate();
+            initStartDate();
+            initEndDate();
+            getLoginUser();
+        });
+
+        function getLoginUser(){
+            $.ajax({
+                type : 'POST',
+                dataType : "json",
+                url : "../../user/getLoginUser",
+                success : function(data) {
+                    $("#username_login").html(data);
+                }
+            });
+        }
+
+        function logout(){
+            $.ajax({
+                type : 'POST',
+                dataType : "json",
+                url : "../../user/logout",
+                success : function(data) {
+                    location.href = "../../login.html";
+                }
+            });
+        }
+
+        function initDate(){
+            $('#time').datetimepicker({
+                language:  'zh-CN',
+                format: 'yyyy-MM-dd hh:ii',
+                autoclose: 1,
+                minuteStep: 1,
+                startView: 3, //这里就设置了默认视图为年视图
+                minView: 0, //设置最小视图为年视图
+                forceParse: 0 ///选择后直接带回；要加！
+            }).on('changeDate',function(ev){
+                initProbe2();
+            });
+        }
+
+        function initStartDate(){
+            $('#starttime').datetimepicker({
+                language:  'zh-CN',
+                format: 'yyyy-MM-dd hh:ii',
+                autoclose: 1,
+                minuteStep: 1,
+                startView: 3, //这里就设置了默认视图为年视图
+                minView: 0, //设置最小视图为年视图
+                forceParse: 0 ///选择后直接带回；要加！
+            });
+        }
+
+        function initEndDate(){
+            $('#endtime').datetimepicker({
+                language:  'zh-CN',
+                format: 'yyyy-MM-dd hh:ii',
+                autoclose: 1,
+                minuteStep: 1,
+                startView: 3, //这里就设置了默认视图为年视图
+                minView: 0, //设置最小视图为年视图
+                forceParse: 0 ///选择后直接带回；要加！
+            }).on('changeDate',function(ev){
+                initProbe3();
+            });
+        }
+
+        function getProbeMac(){
+            var probeMac = $("#lineChartSelect").val();
+            initProbe(probeMac);
+        }
+
+        function initList(){
+            $.ajax({
+                type : 'POST',
+                dataType : "json",
+                url : "../../probe/initList",
+                success : function(response) {
+                    console.log(response);
+                    var option = "";
+                    var probeMacList = response.data.probeMacList;
+                    var probeCount = probeMacList.length;
+                    $("#probeCount").html(probeCount);
+                    if(probeMacList.length > 0){
+                        $.each(probeMacList, function(i, probeMac){
+                            option = option + "<option value = '"+probeMac+"'>"+probeMac+"</option>";
+                        });
+                        initProbe(probeMacList[0]);
+                    }
+                    $("#lineChartSelect").html(option);
+                    $('.selectpicker').selectpicker('refresh');
+                    initProbe2();
+                    initProbe3();
+                }
+            });
+        }
+
+        function initProbe3(){
+            var myChart = echarts.init(document.getElementById('barChart'));
+            myChart.showLoading({
+                text: "图表数据正在努力加载..."
+            });
+
+            var endTime = $("#endtime2").val();
+            if(endTime == null || endTime == ""){
+                endTime = new Date().getTime().toString();
+            }else{
+                endTime = Date.parse(new Date(endTime));
+            }
+            var beginTime = $("#starttime2").val();
+            if(beginTime == null || beginTime == ""){
+                beginTime = new Date().getTime() - 24 * 3600 * 1000;
+            }else{
+                beginTime = Date.parse(new Date(beginTime));
+            }
+            $.ajax({
+                type : 'post',
+                dataType : "json",
+                url : "../../probe/getProbeThroughtoutListByTimeWithMac",
+                data : {
+                    "beginTime": beginTime,
+                    "endTime" : endTime
+                },
+                success : function(result) {
+                    console.log(result);
+                    var probeMacList = result.data.probeMacList;
+                    var probeThroughtoutList = result.data.probeThroughtoutList
+                    myChart.hideLoading();
+                    myChart.setOption(option = {
+                        color: ['#3398DB'],
+                        tooltip : {
+                            trigger: 'axis',
+                            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis : [
+                            {
+                                type : 'category',
+                                data : probeMacList,
+                                axisTick: {
+                                    alignWithLabel: true
+                                }
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series : [
+                            {
+                                name:'吞吐量',
+                                type:'bar',
+                                barWidth: '60%',
+                                data:probeThroughtoutList
+                            }
+                        ]
+                    });
+                }
+            });
+        }
+
+        function initProbe2(){
+            var myChart = echarts.init(document.getElementById('pieChart'));
+            myChart.showLoading({
+                text: "图表数据正在努力加载..."
+            });
+            var endTime = $("#time2").val();
+            if(endTime == null || endTime == ""){
+                endTime = new Date().getTime().toString();
+            }else{
+                endTime = Date.parse(new Date(endTime));
+            }
+            $.ajax({
+                type : 'post',
+                dataType : "json",
+                url : "../../probe/getProbeThroughtoutListByTime",
+                data : {
+                    "endTime" : endTime
+                },
+                success : function(result) {
+                    console.log(result);
+                    var probeMacList = result.data.probeMacList;
+                    var probeValueList = result.data.probeValueList;
+                    var regularTime = result.data.regularTime;
+                    console.log(probeMacList);
+                    console.log(probeValueList);
+                    myChart.hideLoading();
+                    myChart.setOption(option = {
+                        title : {
+                            text: '探针每分钟内吞吐量占比',
+                            subtext: regularTime,
+                            x:'center'
+                        },
+                        tooltip : {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} : {c} ({d}%)"
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left',
+                            data: probeMacList
+                        },
+                        series : [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius : '55%',
+                                center: ['50%', '60%'],
+                                data: probeValueList,
+                                itemStyle: {
+                                    emphasis: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        }
+
+        function initProbe(probeMac){
+            var myChart = echarts.init(document.getElementById('lineChart'));
+            myChart.showLoading({
+                text: "图表数据正在努力加载..."
+            });
+            $.ajax({
+                type : 'post',
+                dataType : "json",
+                url : "../../probe/getProbeThroughtoutListByMac",
+                data : {
+                    "probeMac" : probeMac
+                },
+                success : function(result) {
+                    var data = result.data.throughoutList;
+                    console.log(result);
+                    var maxthroughtout = 0;
+                    var maxprobe = "";
+                    $.each(data, function(i, obj){
+                        if(obj[1] > maxthroughtout){
+                            maxthroughtout = obj[1];
+                            maxprobe = obj[0];
+                        }
+                    });
+                    $("#maxthroughtout").html(maxthroughtout);
+                    $("#maxProbe").html(maxprobe);
+                    var startValue = result.data.regularTime;
+                    myChart.hideLoading();
+                    myChart.setOption(option = {
+                        title: {
+                            text: '探针吞吐量'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        xAxis: {
+                            data: data.map(function (item) {
+                                return item[0];
+                            })
+                        },
+                        yAxis: {
+                            splitLine: {
+                                show: false
+                            }
+                        },
+                        toolbox: {
+                            left: 'center',
+                            feature: {
+                                dataZoom: {
+                                    yAxisIndex: 'none'
+                                },
+                                restore: {},
+                                saveAsImage: {}
+                            }
+                        },
+                        dataZoom: [{
+                            startValue: startValue
+                        }, {
+                            type: 'inside'
+                        }],
+                        visualMap: {
+                            top: 10,
+                            right: 10,
+                            pieces: [{
+                                gt: 0,
+                                lte: 50,
+                                color: '#096'
+                            }, {
+                                gt: 2,
+                                lte: 100,
+                                color: '#ffde33'
+                            }, {
+                                gt: 4,
+                                lte: 150,
+                                color: '#ff9933'
+                            }, {
+                                gt: 8,
+                                lte: 200,
+                                color: '#cc0033'
+                            }, {
+                                gt: 100,
+                                lte: 300,
+                                color: '#660099'
+                            }, {
+                                gt: 125,
+                                color: '#7e0023'
+                            }],
+                            outOfRange: {
+                                color: '#999'
+                            }
+                        },
+                        series: {
+                            name: '吞吐量',
+                            type: 'line',
+                            data: data.map(function (item) {
+                                return item[1];
+                            }),
+                            markLine: {
+                                silent: true,
+                                data: [{
+                                    yAxis: 0
+                                }, {
+                                    yAxis: 3
+                                }, {
+                                    yAxis: 5
+                                }, {
+                                    yAxis: 7
+                                }, {
+                                    yAxis: 10
+                                }]
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
 </head>
 
-<body class="nav-md">
+<body class="nav-md" id = "app">
 <div class="container body">
-    <div class="main_container" id = "app">
+    <div class="main_container">
         <div class="col-md-3 left_col">
             <div class="left_col scroll-view">
                 <div class="navbar nav_title" style="border: 0;">
-                    <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+                    <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>探针管理系统</span></a>
                 </div>
 
                 <div class="clearfix"></div>
 
                 <!-- menu profile quick info -->
                 <div class="profile clearfix">
-                    <div class="profile_pic">
-                    </div>
                     <div class="profile_info">
-                        <span>Welcome,</span>
-                        <h2>John Doe</h2>
+                        <span>欢迎,</span><span><h2 id = "username_login"></h2></span>
                     </div>
                 </div>
                 <!-- /menu profile quick info -->
@@ -66,7 +413,6 @@
                 <!-- sidebar menu -->
                 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
                     <div class="menu_section">
-                        <h3>General</h3>
                         <ul class="nav side-menu">
                             <li><a><i class="fa fa-home"></i> 首页 <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu">
@@ -92,27 +438,15 @@
                                     <li><a href="probe.html">蓝牙探针接入授权</a></li>
                                 </ul>
                             </li>
+                            <li><a><i class="fa fa-table"></i> 手环数据展示 <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    <li><a href="braceletdata.html">手环数据展示</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
                 <!-- /sidebar menu -->
-
-                <!-- /menu footer buttons -->
-                <div class="sidebar-footer hidden-small">
-                    <a data-toggle="tooltip" data-placement="top" title="Settings">
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                        <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="Lock">
-                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
-                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                    </a>
-                </div>
-                <!-- /menu footer buttons -->
             </div>
         </div>
 
@@ -253,338 +587,5 @@
 
 <!-- Custom Theme Scripts -->
 <script src="../js/custom.min.js"></script>
-
-<script>
-    $(document).ready(function() {
-        initDate();
-        initStartDate();
-        initEndDate();
-        // var probeMac = "caaa16140773";
-    });
-
-    function initDate(){
-        $('#time').datetimepicker({
-            language:  'zh-CN',
-            format: 'yyyy-MM-dd hh:ii',
-            autoclose: 1,
-            minuteStep: 1,
-            startView: 3, //这里就设置了默认视图为年视图
-            minView: 0, //设置最小视图为年视图
-            forceParse: 0 ///选择后直接带回；要加！
-        }).on('changeDate',function(ev){
-            initProbe2();
-        });
-    }
-
-    function initStartDate(){
-        $('#starttime').datetimepicker({
-            language:  'zh-CN',
-            format: 'yyyy-MM-dd hh:ii',
-            autoclose: 1,
-            minuteStep: 1,
-            startView: 3, //这里就设置了默认视图为年视图
-            minView: 0, //设置最小视图为年视图
-            forceParse: 0 ///选择后直接带回；要加！
-        });
-    }
-
-    function initEndDate(){
-        $('#endtime').datetimepicker({
-            language:  'zh-CN',
-            format: 'yyyy-MM-dd hh:ii',
-            autoclose: 1,
-            minuteStep: 1,
-            startView: 3, //这里就设置了默认视图为年视图
-            minView: 0, //设置最小视图为年视图
-            forceParse: 0 ///选择后直接带回；要加！
-        }).on('changeDate',function(ev){
-            initProbe3();
-        });
-    }
-
-    function getProbeMac(){
-        var probeMac = $("#lineChartSelect").val();
-        initProbe(probeMac);
-    }
-
-    var app = new Vue({
-        el : "#app",
-        data : {
-            probeList : ""
-        },
-        mounted: function () {
-            this.$http.get('../../probe/initList').then(response => {
-                // app.probeList = response.data.data.probeMacList;
-                // console.log(app);
-                var option = "";
-                var probeMacList = response.data.data.probeMacList;
-                var probeCount = probeMacList.length;
-                $("#probeCount").html(probeCount);
-                if(probeMacList.length > 0){
-                    $.each(probeMacList, function(i, probeMac){
-                        option = option + "<option value = '"+probeMac+"'>"+probeMac+"</option>";
-                    });
-                    initProbe(probeMacList[0]);
-                }
-                $("#lineChartSelect").html(option);
-                $('.selectpicker').selectpicker('refresh');
-                initProbe2();
-                initProbe3();
-            }, response => {
-                console.log("error");
-            });
-        },
-    })
-
-    function initProbe3(){
-        var myChart = echarts.init(document.getElementById('barChart'));
-        myChart.showLoading({
-            text: "图表数据正在努力加载..."
-        });
-
-        var endTime = $("#endtime2").val();
-        if(endTime == null || endTime == ""){
-            endTime = new Date().getTime().toString();
-        }else{
-            endTime = Date.parse(new Date(endTime));
-        }
-        var beginTime = $("#starttime2").val();
-        if(beginTime == null || beginTime == ""){
-            beginTime = new Date().getTime() - 24 * 3600 * 1000;
-        }else{
-            beginTime = Date.parse(new Date(beginTime));
-        }
-        $.ajax({
-            type : 'post',
-            dataType : "json",
-            url : "../../probe/getProbeThroughtoutListByTimeWithMac",
-            data : {
-                "beginTime": beginTime,
-                "endTime" : endTime
-            },
-            success : function(result) {
-                console.log(result);
-                var probeMacList = result.data.probeMacList;
-                var probeThroughtoutList = result.data.probeThroughtoutList
-                myChart.hideLoading();
-                myChart.setOption(option = {
-                    color: ['#3398DB'],
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            data : probeMacList,
-                            axisTick: {
-                                alignWithLabel: true
-                            }
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value'
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'吞吐量',
-                            type:'bar',
-                            barWidth: '60%',
-                            data:probeThroughtoutList
-                        }
-                    ]
-                });
-            }
-        });
-    }
-
-    function initProbe2(){
-        var myChart = echarts.init(document.getElementById('pieChart'));
-        myChart.showLoading({
-            text: "图表数据正在努力加载..."
-        });
-        var endTime = $("#time2").val();
-        if(endTime == null || endTime == ""){
-            endTime = new Date().getTime().toString();
-        }else{
-            endTime = Date.parse(new Date(endTime));
-        }
-        $.ajax({
-            type : 'post',
-            dataType : "json",
-            url : "../../probe/getProbeThroughtoutListByTime",
-            data : {
-                "endTime" : endTime
-            },
-            success : function(result) {
-                console.log(result);
-                var probeMacList = result.data.probeMacList;
-                var probeValueList = result.data.probeValueList;
-                var regularTime = result.data.regularTime;
-                console.log(probeMacList);
-                console.log(probeValueList);
-                myChart.hideLoading();
-                myChart.setOption(option = {
-                    title : {
-                        text: '探针每分钟内吞吐量占比',
-                        subtext: regularTime,
-                        x:'center'
-                    },
-                    tooltip : {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b} : {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: probeMacList
-                    },
-                    series : [
-                        {
-                            name: '访问来源',
-                            type: 'pie',
-                            radius : '55%',
-                            center: ['50%', '60%'],
-                            data: probeValueList,
-                            itemStyle: {
-                                emphasis: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                });
-            }
-        });
-    }
-
-    function initProbe(probeMac){
-        var myChart = echarts.init(document.getElementById('lineChart'));
-        myChart.showLoading({
-            text: "图表数据正在努力加载..."
-        });
-        $.ajax({
-            type : 'post',
-            dataType : "json",
-            url : "../../probe/getProbeThroughtoutListByMac",
-            data : {
-                "probeMac" : probeMac
-            },
-            success : function(result) {
-                var data = result.data.throughoutList;
-                console.log(result);
-                var maxthroughtout = 0;
-                var maxprobe = "";
-                $.each(data, function(i, obj){
-                    if(obj[1] > maxthroughtout){
-                        maxthroughtout = obj[1];
-                        maxprobe = obj[0];
-                    }
-                });
-                $("#maxthroughtout").html(maxthroughtout);
-                $("#maxProbe").html(maxprobe);
-                var startValue = result.data.regularTime;
-                myChart.hideLoading();
-                myChart.setOption(option = {
-                    title: {
-                        text: '探针吞吐量'
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    xAxis: {
-                        data: data.map(function (item) {
-                            return item[0];
-                        })
-                    },
-                    yAxis: {
-                        splitLine: {
-                            show: false
-                        }
-                    },
-                    toolbox: {
-                        left: 'center',
-                        feature: {
-                            dataZoom: {
-                                yAxisIndex: 'none'
-                            },
-                            restore: {},
-                            saveAsImage: {}
-                        }
-                    },
-                    dataZoom: [{
-                        startValue: startValue
-                    }, {
-                        type: 'inside'
-                    }],
-                    visualMap: {
-                        top: 10,
-                        right: 10,
-                        pieces: [{
-                            gt: 0,
-                            lte: 50,
-                            color: '#096'
-                        }, {
-                            gt: 2,
-                            lte: 100,
-                            color: '#ffde33'
-                        }, {
-                            gt: 4,
-                            lte: 150,
-                            color: '#ff9933'
-                        }, {
-                            gt: 8,
-                            lte: 200,
-                            color: '#cc0033'
-                        }, {
-                            gt: 100,
-                            lte: 300,
-                            color: '#660099'
-                        }, {
-                            gt: 125,
-                            color: '#7e0023'
-                        }],
-                        outOfRange: {
-                            color: '#999'
-                        }
-                    },
-                    series: {
-                        name: '吞吐量',
-                        type: 'line',
-                        data: data.map(function (item) {
-                            return item[1];
-                        }),
-                        markLine: {
-                            silent: true,
-                            data: [{
-                                yAxis: 0
-                            }, {
-                                yAxis: 3
-                            }, {
-                                yAxis: 5
-                            }, {
-                                yAxis: 7
-                            }, {
-                                yAxis: 10
-                            }]
-                        }
-                    }
-                });
-            }
-        });
-    }
-</script>
 </body>
 </html>

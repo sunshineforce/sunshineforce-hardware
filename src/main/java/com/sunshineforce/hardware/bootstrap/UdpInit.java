@@ -46,7 +46,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                 while(true){
                     List<Braceletdata> braceletdataList = new ArrayList<>();
                     byte[] buf = UdpUtil.getUdpResponse(3333);
-                    System.out.println("------"+ByteUtil.ByteToHex(buf));
+                    log.info("------"+ByteUtil.ByteToHex(buf));
                     byte[] header = new byte[2];
                     System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节
                     if(!checkHeqader(header)){
@@ -56,7 +56,6 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                         byte[] probeMacByte = new byte[6];
                         System.arraycopy(buf, 11, probeMacByte, 0, probeMacByte.length);
                         String probeMac = ByteUtil.ByteToHex(probeMacByte);
-                        System.out.println(probeMac);
                         int count = iProbeService.getProbeByMac(probeMac);
                         if(count <= 0){
                             log.info("-------------------the probe is not authorize,probeMac is : " + probeMac);

@@ -16,33 +16,28 @@ public class ParseBracelete {
         byte[] lenByte = new byte[2];
         System.arraycopy(buf, 5, lenByte, 0, lenByte.length);
         int length = Integer.parseInt(ByteUtil.ByteToHex(lenByte), 16);//16进制转10进制
-        System.out.println(length);
         log.info("length: "+length);
 
         //取温度
         byte[] temperatureByte = new byte[2];
         System.arraycopy(buf, 7, temperatureByte, 0, temperatureByte.length);
         int temperature = Integer.parseInt(ByteUtil.ByteToHex(temperatureByte), 16);
-        System.out.println(temperature);
         log.info("温度："+temperature);
 
         //取湿度
         byte[] humidityByte = new byte[2];
         System.arraycopy(buf, 9, humidityByte, 0, humidityByte.length);
         int humidity = Integer.parseInt(ByteUtil.ByteToHex(humidityByte), 16);
-        System.out.println(humidity);
         log.info("湿度："+humidity);
 
         //终端个数
         byte[] numByte = new byte[2];
         System.arraycopy(buf, 17, numByte, 0, numByte.length);
         int num = Integer.parseInt(ByteUtil.ByteToHex(numByte), 16);
-        System.out.println(num);
         log.info("终端个数："+num);
 
         //取数据长度，length-温度-湿度-蓝牙设备mac-终端-CRC
         int dataLen = length - 2 - 2 - 6 - 2;
-        System.out.println(dataLen);
         log.info("数据长度："+dataLen);
         //取所有设备发送的数据
         byte[] dataByte = new byte[dataLen];
@@ -50,8 +45,8 @@ public class ParseBracelete {
         String dataStr = ByteUtil.ByteToHex(dataByte);
         log.info("dataStr:      " + dataStr);
         //循环取每个设备数据
+        int startPos = 0;
         for (int i = 0; i < num; i++) {
-            int startPos = i * 38;
             //取手环设备mac
             byte[] braceletMacByte = new byte[6];
             System.arraycopy(dataByte, startPos, braceletMacByte, 0, braceletMacByte.length);
@@ -73,6 +68,10 @@ public class ParseBracelete {
             if (braceletdata == null) {
                 continue;
             }
+
+            //b6域+b7域+b8域+mac+信号量
+            startPos = startPos + 31 + 38;
+
             braceletdata.setBraceletMac(braceletMac);
             braceletdata.setProbeMac(probeMac);
             braceletdata.setAddTime(System.currentTimeMillis());
@@ -137,7 +136,7 @@ public class ParseBracelete {
         }
 
         //取自定义数据
-        byte[] dataByte = new byte[length - 2];
+        byte[] dataByte = new byte[length - 1];
         System.arraycopy(broadcastValueByte, 10, dataByte, 0, dataByte.length);
         log.info("自定义数据："+ByteUtil.ByteToHex(dataByte));
 

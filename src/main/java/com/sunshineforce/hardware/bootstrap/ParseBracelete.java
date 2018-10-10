@@ -119,7 +119,7 @@ public class ParseBracelete {
         byte[] flagByte = new byte[1];
         System.arraycopy(broadcastValueByte, 8, flagByte, 0, flagByte.length);
         String flag = ByteUtil.ByteToHex(flagByte);
-        System.out.println("flag:    " + flag);
+        log.info("flag:    " + flag);
         if (!flag.toUpperCase().equals("FF")) {
             log.info("flag err");
             return null;
@@ -129,7 +129,7 @@ public class ParseBracelete {
         byte[] packageByte = new byte[1];
         System.arraycopy(broadcastValueByte, 9, packageByte, 0, packageByte.length);
         String packageId = ByteUtil.ByteToHex(packageByte);
-        System.out.println("package:     " + packageId);
+        log.info("package:     " + packageId);
         if (!packageId.toUpperCase().equals("B8")) {
             log.info("packageId err");
             return null;

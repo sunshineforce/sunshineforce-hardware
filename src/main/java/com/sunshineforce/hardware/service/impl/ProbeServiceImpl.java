@@ -222,7 +222,9 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
     private Example buildExample(Probe probe){
         Example probeExample = new Example(Probe.class);
         Example.Criteria criteria = probeExample.createCriteria();
-        probeExample.setOrderByClause(probe.getOrderName() + " " + probe.getOrderType());
+        String orderName = Optional.ofNullable(probe.getOrderName()).orElse("id");
+        String orderType = Optional.ofNullable(probe.getOrderType()).orElse("asc");
+        probeExample.setOrderByClause(orderName + " " + orderType);
         String location = Optional.ofNullable(probe.getLocation()).orElse(null);
         if(location != null){
             criteria.andLike("location", "%" + location + "%");

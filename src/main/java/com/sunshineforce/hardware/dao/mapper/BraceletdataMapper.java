@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BraceletdataMapper extends Mapper<Braceletdata> {
-
+    int replaceInsert(Braceletdata braceletdata);
 }

@@ -27,7 +27,9 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
     @Override
     public List<Braceletdata> selectBraceletdatas(BraceletdataRequest braceletdataRequest) {
         Example braceletdataExample = buildExample(braceletdataRequest);
-        PageHelper.startPage(braceletdataRequest.getCurrentPage(), braceletdataRequest.getPageSize(), braceletdataRequest.getOrderName() + " " + braceletdataRequest.getOrderType());
+        String orderName = Optional.ofNullable(braceletdataRequest.getOrderName()).orElse("id");
+        String orderType = Optional.ofNullable(braceletdataRequest.getOrderType()).orElse("asc");
+        PageHelper.startPage(braceletdataRequest.getCurrentPage(), braceletdataRequest.getPageSize(), orderName + " " + orderType);
         List<Braceletdata> braceletdataList = braceletdataMapper.selectByExample(braceletdataExample);
         PageInfo<Braceletdata> braceletdataPageInfo = new PageInfo<Braceletdata>(braceletdataList);
         return braceletdataPageInfo.getList();
@@ -51,7 +53,6 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
             criteria.andLessThan("addTime", endTime);
         }
         String proheMac = Optional.ofNullable(braceletdataRequest.getProbeMac()).orElse(null);
-        System.out.println("----------"+proheMac);
         if(proheMac != null){
             criteria.andEqualTo("probeMac", proheMac);
         }

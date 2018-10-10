@@ -32,7 +32,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
     private ParseBracelete parseBracelete = ParseBracelete.getInstance();
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 
 	}
 
@@ -66,7 +66,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                             int type = Integer.parseInt(ByteUtil.ByteToHex(typeByte), 16);
                             if(type == 1){
                                 braceletdataList = parseBracelete.parse(buf, probeMac);
-                                braceletdataList.stream().forEach(braceletdata -> braceletdataMapper.insert(braceletdata));
+                                braceletdataList.stream().forEach(braceletdata -> braceletdataMapper.replaceInsert(braceletdata));
                             }else if(type == 2){
                                 log.info("-------------------type heart beat");
                             }else{

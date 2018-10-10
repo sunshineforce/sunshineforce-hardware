@@ -47,7 +47,7 @@
         <!-- 自动扫描mapping.xml文件 -->
         <property name="mapperLocations">
             <list>
-                <value>classpath*:com/sunshineforce/hardware/dao/**/*.xml</value>
+                <value>classpath*:mapping/*.xml</value>
             </list>
         </property>
         <!-- 加入Mybatis物理分页插件 -->

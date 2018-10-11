@@ -63,14 +63,14 @@ public class ParseBracelete {
             String broadcastValue = ByteUtil.ByteToHex(broadcastValueByte);
             log.info("broadcastValue  " + broadcastValue);
 
+            //b6域+b7域+b8域+mac+信号量
+            startPos = startPos + 31 + 38;
+
             //当手环未连接app时只发送可广播数据,解析data
             Braceletdata braceletdata = getData(broadcastValueByte);
             if (braceletdata == null) {
                 continue;
             }
-
-            //b6域+b7域+b8域+mac+信号量
-            startPos = startPos + 31 + 38;
 
             braceletdata.setBraceletMac(braceletMac);
             braceletdata.setProbeMac(probeMac);

@@ -59,7 +59,11 @@ public class UserController {
     @ResponseBody
     @RequestMapping("getLoginUser")
     public String getLoginUser(HttpServletRequest request){
-        return request.getSession().getAttribute("username").toString();
+        if(request.getSession().getAttribute("username") == null){
+            return "--";
+        }else{
+            return request.getSession().getAttribute("username").toString();
+        }
     }
 
     @ResponseBody

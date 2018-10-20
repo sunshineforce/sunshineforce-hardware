@@ -56,7 +56,22 @@ public class AcConfig {
         log.info("---0----"+ssidHex);
         log.info("---0----"+passwordHex);
         Integer length = 8 + ssidHex.length() / 2 + passwordHex.length() / 2;
-        builder.append(HEADER).append(PD).append(CONFIGTYPE).append("00").append(Integer.toHexString(length)).append(UdpUtil.macTpHex(probeMac)).append(Integer.toHexString(ssidHex.length()/2)).append(ssidHex).append(Integer.toHexString(passwordHex.length()/2)).append(passwordHex);
+        String lengthHex = Integer.toHexString(length);
+        while(lengthHex.length() < 4){
+            lengthHex = "0" + lengthHex;
+        }
+
+        String ssidLengthHex = Integer.toHexString(ssidHex.length() / 2);
+        while(ssidLengthHex.length() < 2){
+            ssidLengthHex = "0" + ssidLengthHex;
+        }
+
+        String passwordLengthHex = Integer.toHexString(passwordHex.length() / 2);
+        while(passwordLengthHex.length() < 2){
+            passwordLengthHex = "0" + passwordLengthHex;
+        }
+
+        builder.append(HEADER).append(PD).append(CONFIGTYPE).append(lengthHex).append(UdpUtil.macTpHex(probeMac)).append(ssidLengthHex).append(ssidHex).append(passwordLengthHex).append(passwordHex);
         log.info("====="+builder.toString());
         return ByteUtil.HexToByte(builder.toString());
     }
@@ -81,8 +96,12 @@ public class AcConfig {
         String ip = wifi.getIp();
         String probeMac = wifi.getProbeMac();
         StringBuilder builder = new StringBuilder();
-        builder.append(HEADER).append(PD).append(SERVERTYPE).append("000c").append(UdpUtil.macTpHex(probeMac)).append(UdpUtil.ipTpHex(ip)).append(Integer.toHexString(port));
-        log.info("======="+Integer.toHexString(9595));
+        String portHex = Integer.toHexString(port);
+        while(portHex.length() < 4){
+            portHex = "0" + portHex;
+        }
+        builder.append(HEADER).append(PD).append(SERVERTYPE).append("000c").append(UdpUtil.macTpHex(probeMac)).append(UdpUtil.ipTpHex(ip)).append(portHex);
+        log.info("======="+Integer.toHexString(3333));
         log.info("toggle----"+builder.toString().toLowerCase());
         return ByteUtil.HexToByte(builder.toString().toLowerCase());
     }

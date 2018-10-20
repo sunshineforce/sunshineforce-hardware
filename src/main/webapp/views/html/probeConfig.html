@@ -22,17 +22,17 @@
 	<link href="../css/custom.min.css" rel="stylesheet">
 
     <link href="../css/bootstrap-table.css" rel="stylesheet">
-
+    <link href="../css/bootstrap-select.min.css" rel="stylesheet">
     <!-- jQuery -->
     <script src="../js/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap-select.min.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		//初始化Table
-        initTable();
+        initList();
         getLoginUser();
 	});
 
@@ -58,25 +58,34 @@
         });
     }
 
-	function initData(){
+    function initList(){
         $.ajax({
-            type : 'post',
+            type : 'POST',
             dataType : "json",
-            url : "../../probe/getList",
-            data : {
-                "probeMac" : $("#search_probeMac").val(),
-                "location" : $("#search_location").val()
-            },
-            success : function(data) {
-                initTable(data.data.probeResponseList);
+            url : "../../probe/initList",
+            success : function(response) {
+                console.log(response);
+                var option = "";
+                var probeMacList = response.data.probeMacList;
+                var probeCount = probeMacList.length;
+                $("#probeCount").html(probeCount);
+                if(probeMacList.length > 0){
+                    $.each(probeMacList, function(i, probeMac){
+                        option = option + "<option value = '"+probeMac+"'>"+probeMac+"</option>";
+                    });
+                    initTable(probeMacList[0]);
+                }
+                $("#search_probeMac").html(option);
+                $('.selectpicker').selectpicker('refresh');
             }
         });
     }
 
 	//初始化Table
-	function initTable() {
+	function initTable(probeMac) {
+        $("#probeTable").bootstrapTable('destroy');
 		$('#probeTable').bootstrapTable({
-			url : "../../probe/getList", //请求后台的URL（*）
+			url : "../../ac/requestSelect?probeMac="+probeMac, //请求后台的URL（*）
             responseHandler:function (res) {
                 return res.data;
             },
@@ -104,30 +113,34 @@
 			columns : [ {
 				checkbox : true
 			},{
-				field : 'id',
-				title : '序号',
+				field : 'probeMac',
+				title : '探针mac地址',
 				sortable : true
 			},{
-				field : 'probeMac',
-				title : '探针mac',
+				field : 'wifiSsid',
+				title : 'wifi名',
                 sortable : true
 			},{
-				field : 'statusStr',
-				title : '状态',
+				field : 'wifiPwd',
+				title : 'wifi密码',
                 sortable : true
 			},{
-				field : 'location',
-				title : '位置',
+				field : 'wifiStatus',
+				title : '探针状态',
                 sortable : true
 			},{
-				field : 'isNormalStr',
-				title : '是否运行正常',
+				field : 'serverIp',
+				title : '服务器ip',
                 sortable : true
 			},{
-				field : 'regularThroughput',
-				title : '实时吞吐量',
+				field : 'serverPort',
+				title : '服务器端口',
                 sortable : true
-			}],
+			},{
+                field : 'version',
+                title : '探针固件版本',
+                sortable : true
+            }],
 		});
 	};
 
@@ -140,69 +153,148 @@
 		};
 		return temp;
 	}
-	
-	function search() {
-		var probeMac = $("#search_probeMac").val();
-		var location = $("#search_location").val();
-        var statusStr = $("#search_statusStr").val();
-		
-		$('#probeTable').bootstrapTable('refresh', {
-			query : { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
-				probeMac : probeMac,
-                location : location,
-                statusStr : statusStr
-			}
-		});
+
+    function getProbeMac(){
+        var probeMac = $("#search_probeMac").val();
+        initTable(probeMac);
+    }
+
+    function setServer(){
+        $("#modal-container-985684").modal();
+        var allSelections = $('#probeTable').bootstrapTable('getAllSelections');
+        var ids = "";
+        $.each(allSelections, function(i, selection) {
+            if(i == 0){
+                ids = selection["probeMac"];
+            }else{
+                ids = ids + "," + selection["probeMac"];
+            }
+        });
+        $("#setServerSave").click(function(){
+            $.ajax({
+                type : 'post',
+                dataType : "json",
+                url : "../../ac/setServer",
+                data : {
+                    "ip" : $("#serverIp").val(),
+                    "port" : $("#serverPort").val(),
+                    "probeMac" : ids
+                },
+                success : function(data) {
+                    alert(data);
+                    if(data==1){
+                        alert("成功");
+                    }else{
+                        alert("失败，请重试");
+                    }
+                    $("#modal-container-985684").modal("toggle");
+                }
+            });
+        });
+    }
+
+	function openProbe() {
+        $("#modal-container-770346").modal();
+        var allSelections = $('#probeTable').bootstrapTable('getAllSelections');
+        var ids = "";
+        $.each(allSelections, function(i, selection) {
+            if(i == 0){
+                ids = selection["probeMac"];
+            }else{
+                ids = ids + "," + selection["probeMac"];
+            }
+        });
+        $("#changeStatus").click(function(){
+            $.ajax({
+                type : 'POST',
+                dataType : "json",
+                url : "../../ac/toggleWifi",
+                data : {
+                    "probeMac" : ids,
+                    "status":0
+                },
+                success : function(data) {
+                    if(data != 0){
+                        alert("成功");
+
+                    }else{
+                        alert("请重试");
+                    }
+                    $("#modal-container-770346").modal("toggle");
+                    console.log(data);
+                    window.location.reload();
+                }
+            });
+        });
 	}
 	
-	function add() {
-		$("#modal-container-985684").modal();
-	}
-	
-	function save(){
-		$.ajax({
-			type : 'post',
-			dataType : "json",
-			url : "../../probe/addProbe",
-			data : {
-				"probeMac" : $("#add_probeMac").val(),
-				"location" : $("#add_location").val()
-			},
-			success : function(data) {
-				$("#modal-container-985684").modal("toggle");
-				window.location.reload();
-			}
-		});
-	}
-	
-	function del() {
+	function closeProbe() {
 		$("#modal-container-770346").modal();
 		var allSelections = $('#probeTable') .bootstrapTable('getAllSelections');
 		var ids = "";
 		$.each(allSelections, function(i, selection) {
 			if(i == 0){
-				ids = selection["id"];
+				ids = selection["probeMac"];
 			}else{
-				ids = ids + "," + selection["id"];
+				ids = ids + "," + selection["probeMac"];
 			}
 		});
-		$("#del").click(function(){
+		$("#changeStatus").click(function(){
 			$.ajax({
 				type : 'POST',
 				dataType : "json",
-				url : "../../probe/deleteProbeByIds",
+				url : "../../ac/toggleWifi",
 				data : {
-					"ids" : ids
+					"probeMac" : ids,
+                    "status":1
 				},
 				success : function(data) {
-					alert("删除成功");
-					$("#modal-container-770346").modal("toggle");
-					console.log(data);
-					window.location.reload();
+				    if(data != 0){
+                        alert("成功");
+
+                    }else{
+                        alert("请重试");
+                    }
+                    $("#modal-container-770346").modal("toggle");
+                    window.location.reload();
 				}
 			});
 		});
 	}
+
+    function setConfig() {
+        $("#modal-container-985689").modal();
+        var allSelections = $('#probeTable').bootstrapTable('getAllSelections');
+        var ids = "";
+        $.each(allSelections, function(i, selection) {
+            if(i == 0){
+                ids = selection["probeMac"];
+            }else{
+                ids = ids + "," + selection["probeMac"];
+            }
+        });
+        $("#configSave").click(function(){
+            $.ajax({
+                type : 'post',
+                dataType : "json",
+                url : "../../ac/updateConfig",
+                data : {
+                    "ssid" : $("#ssid").val(),
+                    "password" : $("#password").val(),
+                    "probeMac" : ids
+                },
+                success : function(data) {
+                    alert(data);
+                    if(data==1){
+                        alert("成功");
+                    }else{
+                        alert("失败，请重试");
+                    }
+                    $("#modal-container-985689").modal("toggle");
+                }
+            });
+        });
+    }
 </script>
 </head>
 
@@ -301,17 +393,9 @@
 								<form id="formSearch" class="form-horizontal">
 									<div class="form-group" style="margin-top: 15px">
 										<label class="control-label col-sm-1" for="search_probeMac">探针mac</label>
-										<div class="col-sm-1">
-											<input type="text" class="form-control" id="search_probeMac">
-										</div>
-										<label class="control-label col-sm-1" for="search_location">探针位置</label>
-										<div class="col-sm-1">
-											<input type="text" class="form-control" id="search_location">
-										</div>
-										<div class="col-sm-4" style="text-align: left;">
-											<button type="button" style="margin-left: 50px"
-												id="btn_query" class="btn btn-primary" onclick="search()">查询</button>
-										</div>
+                                        <select class="selectpicker" id="search_probeMac" onchange="getProbeMac()">
+                                            <!--<option v-for="probe in probeList" :value = probe>{{probe}}</option>-->
+                                        </select>
 									</div>
 								</form>
 							</div>
@@ -320,12 +404,18 @@
 								<div class="x_title">
 									<div class="x_content">
 										<div id="toolbar" class="btn-group">
-											<button id="btn_add" type="button" class="btn btn-default" onclick = "add()">
-												<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+											<button id="btn_add" type="button" class="btn btn-default" onclick = "openProbe()">
+												<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>打开
 											</button>
-											<button id="btn_delete" type="button" class="btn btn-default" onclick = "del()">
-												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+											<button id="btn_delete" type="button" class="btn btn-default" onclick = "closeProbe()">
+												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
 											</button>
+                                            <button id="btn_edit" type="button" class="btn btn-default" onclick = "setServer()">
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>配置远程服务器
+                                            </button>
+                                            <button id="btn_export" type="button" class="btn btn-default" onclick = "setConfig()">
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>配置wifi
+                                            </button>
 										</div>
 										<table id="probeTable"></table>
 									</div>
@@ -359,15 +449,15 @@
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal"
 									aria-hidden="true">×</button>
-								<h4 class="modal-title" id="myModalLabel">删除！</h4>
+								<h4 class="modal-title" id="myModalLabel">改变状态！</h4>
 							</div>
 							<div class="modal-body">
-								<p id="delete">确认删除？</p>
+								<p id="delete">确认改变？</p>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal">关闭</button>
-								<button type="button" class="btn btn-primary" id="del">确认</button>
+								<button type="button" class="btn btn-primary" id="changeStatus">确认</button>
 							</div>
 						</div>
 					</div>
@@ -388,32 +478,27 @@
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"
 										aria-hidden="true">×</button>
-									<h4 class="modal-title" id="myaddModalLabel">新增探针</h4>
+									<h4 class="modal-title" id="myaddModalLabel">配置服务器</h4>
 								</div>
 								<div class="modal-body">
 									<div class="item form-group">
-										<label for="add_probeMac" class="control-label col-md-3">探针mac </label>
+										<label for="serverIp" class="control-label col-md-3">IP地址 </label>
 										<div class="col-md-6 col-sm-6 col-xs-12">
-											<input id="add_probeMac" type="text" name="add_probeMac" class="form-control col-md-7 col-xs-12" required="required">
+											<input id="serverIp" type="text" name="serverIp" class="form-control col-md-7 col-xs-12" required="required">
 										</div>
 									</div>
-									<!--<div class="item form-group">-->
-										<!--<label for="add_location" class="control-label col-md-3">探针位置 </label>-->
-										<!--<div class="col-md-6 col-sm-6 col-xs-12">-->
-											<!--<input id="add_location" type="number" name="add_location" class="form-control col-md-7 col-xs-12" required="required">-->
-										<!--</div>-->
-									<!--</div>-->
+
                                     <div class="item form-group">
-                                        <label for="add_location" class="control-label col-md-3">探针位置 </label>
+                                        <label for="serverPort" class="control-label col-md-3">端口 </label>
                                         <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <input id="add_location" type="text" name="add_location" class="form-control col-md-7 col-xs-12" required="required">
+                                            <input id="serverPort" type="text" name="serverPort" class="form-control col-md-7 col-xs-12" required="required">
                                         </div>
                                     </div>
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default"
 										data-dismiss="modal">关闭</button>
-									<button type="submit" class="btn btn-primary" onclick = "save()">保存</button>
+									<button type="button" class="btn btn-primary" id = "setServerSave">保存</button>
 								</div>
 							</div>
 						</form>
@@ -422,6 +507,48 @@
 			</div>
 		</div>
 	</div>
+
+    <!-- 新增窗体 -->
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="modal fade" id="modal-container-985689" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="x_content" style = "width:600px;margin-left:700px">
+                        <form class="form-horizontal form-label-center" novalidate>
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">×</button>
+                                    <h4 class="modal-title" id="myaddModalLabel2">配置服务器</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="item form-group">
+                                        <label for="ssid" class="control-label col-md-3">ssid </label>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <input id="ssid" type="text" name="serverIp" class="form-control col-md-7 col-xs-12" required="required">
+                                        </div>
+                                    </div>
+
+                                    <div class="item form-group">
+                                        <label for="password" class="control-label col-md-3">密码 </label>
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <input id="password" type="text" name="serverPort" class="form-control col-md-7 col-xs-12" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary" id = "configSave">保存</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- FastClick -->
     <script src="../js/fastclick.js"></script>
     <!-- NProgress -->

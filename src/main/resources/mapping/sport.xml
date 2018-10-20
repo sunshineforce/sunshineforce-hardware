@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunshineforce.hardware.dao.mapper.SportMapper">
+
+    <select id="getProbeMac" parameterType="com.sunshineforce.hardware.domain.request.SportClassRequest" resultType="java.lang.String">
+        select equipment as probeMac from member m join grade g on g.id = m.bangding where g.class_qun_id = #{classQunId}
+        <if test="sex != null">
+            and g.xingbie = #{sex}
+        </if>
+    </select>
+
+    <select id="getSkipNumWithModel" parameterType="com.sunshineforce.hardware.domain.request.SportClassRequest" resultType="java.lang.Long">
+        select sum(skip_num) as skipNum from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.class_qun_id = #{classQunId}
+        <if test="sex != null">
+            and g.xingbie = #{sex}
+        </if>
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        <if test="skipModel != null">
+            and b.skip_model = #{skipModel}
+        </if>
+    </select>
+
+    <select id="timeModelBest" parameterType="com.sunshineforce.hardware.domain.request.SportClassRequest" resultType="java.util.HashMap">
+        select DISTINCT g.xingming as name, sum(b.skip_time) as skipTime from grade g join member m on m.bangding = g.id join t_braceletdata b on b.bracelet_mac = substring(m.equipment, 4) where g.class_qun_id = #{classQunId} and b.skip_model = 2
+        <if test="sex != null">
+            and g.xingbie = #{sex}
+        </if>
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        group by g.xingming order by b.skip_time desc limit 1
+    </select>
+
+    <select id="numModelBest" parameterType="com.sunshineforce.hardware.domain.request.SportClassRequest" resultType="java.util.HashMap">
+        select DISTINCT g.xingming as name, sum(b.skip_num) as skipNum from grade g join member m on m.bangding = g.id join t_braceletdata b on b.bracelet_mac = substring(m.equipment, 4) where g.class_qun_id = #{classQunId} and b.skip_model = 1
+        <if test="sex != null">
+            and g.xingbie = #{sex}
+        </if>
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        group by g.xingming order by b.skip_time asc limit 1
+    </select>
+
+    <select id="getPersonalTotalTime" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        SELECT sum(b.skip_time) as skipTime from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId}
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getPersonalTotalNum" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Long">
+        SELECT sum(b.skip_num) as skipNum from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId}
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getSkipGroupNum" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Long">
+        SELECT count(*) as skipGroup from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and (b.skip_time &gt; 0 or b.skip_num &gt; 0)
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getNumGroup" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        SELECT b.skip_num as skipNum from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and b.skip_model = 1 and b.skip_num &gt; 0
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getTimeGroup" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        SELECT b.skip_time as skipTime from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and b.skip_model = 2 and b.skip_time &gt; 0
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getAveHeartRate" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        select AVG(b.heart_rate) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and b.heart_rate &gt; 0
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getMinHeartRate" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        select MIN(b.heart_rate) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and b.heart_rate &gt; 0
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getMaxHeartRate" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        select MAX(b.heart_rate) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId} and b.heart_rate &gt; 0
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+    </select>
+
+    <select id="getLowTime" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Double">
+        select count(*) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId}
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        <if test="staticHeartRate != null and staticHeartRate != null">
+            and b.heart_rate &gt;= #{lowHeartRate} and b.heart_rate &lt; #{middleHeartRate}
+        </if>
+    </select>
+
+    <select id="getMiddleTime" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Double">
+        select count(*) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId}
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        <if test="staticHeartRate != null and staticHeartRate != null">
+            and b.heart_rate &gt;= #{middleHeartRate} and b.heart_rate &lt; #{heightHeartRate}
+        </if>
+    </select>
+
+    <select id="getHeightTime" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Double">
+        select count(*) from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.id = #{memberId}
+        <if test="startTimeLong != null and endTimeLong != null">
+            and b.add_time &gt; #{startTimeLong} and b.add_time &lt; #{endTimeLong}
+        </if>
+        <if test="staticHeartRate != null and staticHeartRate != null">
+            and b.heart_rate &gt;= #{heightHeartRate}
+        </if>
+    </select>
+
+    <select id="getMemberIdByClassQunId" parameterType="com.sunshineforce.hardware.domain.request.SportPersonalRequest" resultType="java.lang.Integer">
+        select g.id from t_braceletdata b join member m on b.bracelet_mac = substring(m.equipment, 4) join grade g on g.id = m.bangding where g.class_qun_id = #{classQunId}
+    </select>
+
+</mapper>

@@ -52,6 +52,9 @@ public class ByteUtil {
         for (int i = 0; i < str.length(); i++) {
             int ch = (int) str.charAt(i);
             String hex = Integer.toHexString(ch);
+            if(hex.length() < 2){
+                hex = "0" + hex;
+            }
             param = param + hex;
         }
         return param;
@@ -76,7 +79,6 @@ public class ByteUtil {
     }
 
     public static void main(String args[]){
-        int num = hexToInt("ab");
-        System.out.println(num);
+        System.out.println(hexToStr("6c6a"));
     }
 }

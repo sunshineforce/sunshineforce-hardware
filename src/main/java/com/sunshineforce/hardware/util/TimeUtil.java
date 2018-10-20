@@ -24,4 +24,8 @@ public class TimeUtil {
         cal.add(cal.MONTH, 1);
         return cal;
     }
+
+    public static void main(String args[]){
+        System.out.println(getTimeString(new Date(1539264684000l), TimeUtil.dataSecondString));
+    }
 }

@@ -57,13 +57,13 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
             //long currentTime = 1536885977836l;
             long beginTime = currentTime - 10 * 1000;
             BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, currentTime, probeMac);
-            //计算1s内收到数据条数
+            //计算10s内收到数据条数
             long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
             probeResponse.setRegularThroughput(regularThroughput);
             if(regularThroughput > 0 ){
-                if(regularThroughput > 100){
+                if(regularThroughput > 12){
                     probeResponse.setIsNormalStr(IsNormalCode.HEIGHT.getIsMormal());
-                }else if(regularThroughput < 100){
+                }else if(regularThroughput < 8){
                     probeResponse.setIsNormalStr(IsNormalCode.LOW.getIsMormal());
                 }else{
                     probeResponse.setIsNormalStr(IsNormalCode.REGULAR.getIsMormal());
@@ -136,7 +136,7 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
     public ProbeResponse getProbeThroughtoutListByMac(String probeMac) {
         ProbeResponse probeResponse = new ProbeResponse();
         List<List<String>> result = new ArrayList<>();
-        long currentTime = 1538236323709l;
+        long currentTime = System.currentTimeMillis();
         long regularTime = currentTime;
         while(regularTime >= currentTime - 1000 * 3600 * 24){
             long beforeTime = regularTime - 1000 * 60;

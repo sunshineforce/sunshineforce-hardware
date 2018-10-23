@@ -119,15 +119,15 @@ public class AcServiceImpl implements IAcService {
     public static void main(String args[]){
         Wifi wifi = new Wifi();
         wifi.setStatus(0);
-        wifi.setSsid("lj2");
-        wifi.setProbeMac("c914eff6c830");
+        wifi.setSsid("lj");
+        wifi.setProbeMac("caaa16140773");
         wifi.setPassword("95091810");
         wifi.setPort(3333);
         wifi.setIp("192.168.0.100");
         AcServiceImpl acService = new AcServiceImpl();
         //acService.toggleWifi(wifi);
-        acService.updateConfig(wifi);
-        //acService.setServer(wifi);
+        //acService.updateConfig(wifi);
+        acService.setServer(wifi);
         //acService.requestSelect(wifi);
     }
 }

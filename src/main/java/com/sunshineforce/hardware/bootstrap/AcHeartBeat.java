@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AcHeartBeat {
 
     private static final String REQUESTTYPE = "b7";
+    private static final String RESPONSEYPE = "bd";
 
     public static byte[] requestSelect(Wifi wifi) {
         byte[] responseBuf = new byte[200];
@@ -49,14 +50,18 @@ public class AcHeartBeat {
                     log.info("向ip:{}:{}发送查询探针信息消息：{}成功", UdpUtil.hexToip(ByteUtil.ByteToHex(ip)), heartBeatResponsePacket.getPort(), ByteUtil.ByteToHex(serverMsg));
 
                     //获取结果
-                    while (true) {
+                    while(true){
                         responseBuf = new byte[200];
                         DatagramPacket responsePacket = new DatagramPacket(responseBuf, responseBuf.length); // 1024
                         socket.receive(responsePacket);
                         log.info("-------response:-------"+ByteUtil.ByteToHex(responseBuf));
-                        atomicInteger.incrementAndGet();
-                        break;
+                        byte[] responseTypeByte = new byte[1];
+                        System.arraycopy(responseBuf, 2, responseTypeByte, 0, responseTypeByte.length);
+                        if(ByteUtil.ByteToHex(responseTypeByte).equals(RESPONSEYPE)){
+                            break;
+                        }
                     }
+
                     log.info("6666666");
                     break;
                 }else{
@@ -207,13 +212,10 @@ public class AcHeartBeat {
                     log.info("向ip:{}:{}发送开关消息成功",heartBeatResponsePacket.getAddress().getHostAddress(), heartBeatResponsePacket.getPort());
 
                     //获取结果
-                    while (true) {
-                        byte[] responseBuf = new byte[12];
-                        DatagramPacket responsePacket = new DatagramPacket(responseBuf, responseBuf.length); // 1024
-                        socket.receive(responsePacket);
-                        log.info("-------response:-------"+ByteUtil.ByteToHex(responseBuf));
-                        break;
-                    }
+                    byte[] responseBuf = new byte[12];
+                    DatagramPacket responsePacket = new DatagramPacket(responseBuf, responseBuf.length); // 1024
+                    socket.receive(responsePacket);
+                    log.info("-------response:-------"+ByteUtil.ByteToHex(responseBuf));
 
                     //重启
                     byte[] restartByte = AcConfig.getRestartMsg(wifi);

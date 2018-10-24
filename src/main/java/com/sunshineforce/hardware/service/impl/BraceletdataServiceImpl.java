@@ -36,6 +36,13 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
     }
 
     @Override
+    public List<Braceletdata> getBraceletdatasList(BraceletdataRequest braceletdataRequest) {
+        Example braceletdataExample = buildExample(braceletdataRequest);
+        List<Braceletdata> braceletdataList = braceletdataMapper.selectByExample(braceletdataExample);
+        return braceletdataList;
+    }
+
+    @Override
     public long countBraceletdata(BraceletdataRequest braceletdataRequest) {
         Example braceletdataExample = buildExample(braceletdataRequest);
         return braceletdataMapper.selectCountByExample(braceletdataExample);
@@ -55,6 +62,10 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
         String proheMac = Optional.ofNullable(braceletdataRequest.getProbeMac()).orElse(null);
         if(proheMac != null){
             criteria.andEqualTo("probeMac", proheMac);
+        }
+        String braceletMac = Optional.ofNullable(braceletdataRequest.getBraceletMac()).orElse(null);
+        if(braceletMac != null){
+            criteria.andEqualTo("braceletMac", braceletMac);
         }
         return braceletdataExample;
     }

@@ -22,6 +22,6 @@
         <!--<result column="battery" jdbcType="INTEGER" property="battery" />-->
     <!--</resultMap>-->
     <insert id="replaceInsert" parameterType="com.sunshineforce.hardware.domain.Braceletdata">
-        insert ignore into t_braceletdata (probe_Mac, bracelet_mac, heart_rate, step, active, sleep, skip_model, skip_num, skip_time, hrv, utc, static_heart_rate, uuid, add_time, heart_beat, battery) values (#{probeMac}, #{braceletMac},#{heartRate}, #{step}, #{active}, #{sleep}, #{skipModel}, #{skipNum}, #{skipTime}, #{hrv}, #{utc}, #{staticHeartRate}, #{uuid}, #{addTime}, #{heartBeat}, #{battery})
+        insert ignore into t_braceletdata (probe_Mac, bracelet_mac, heart_rate, step, active, sleep, skip_model, skip_num, skip_time, hrv, utc, static_heart_rate, uuid, add_time, heart_beat, battery, signal_value) values (#{probeMac}, #{braceletMac},#{heartRate}, #{step}, #{active}, #{sleep}, #{skipModel}, #{skipNum}, #{skipTime}, #{hrv}, #{utc}, #{staticHeartRate}, #{uuid}, #{addTime}, #{heartBeat}, #{battery}, #{signalValue})
     </insert>
 </mapper>

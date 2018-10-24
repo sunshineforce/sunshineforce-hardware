@@ -7,6 +7,7 @@ public class BraceletdataRequest extends Braceletdata {
     private Long beginTime;
     private Long endTime;
     private String probeMac;
+    private String braceletMac;
 
     public BraceletdataRequest(Long beginTime, Long endTime, String probeMac) {
         this.beginTime = beginTime;
@@ -17,6 +18,16 @@ public class BraceletdataRequest extends Braceletdata {
     public BraceletdataRequest(Long beginTime, Long endTime) {
         this.beginTime = beginTime;
         this.endTime = endTime;
+    }
+
+    @Override
+    public String getBraceletMac() {
+        return braceletMac;
+    }
+
+    @Override
+    public void setBraceletMac(String braceletMac) {
+        this.braceletMac = braceletMac;
     }
 
     public BraceletdataRequest() {

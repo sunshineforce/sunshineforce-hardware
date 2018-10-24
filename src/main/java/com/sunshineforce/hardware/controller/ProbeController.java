@@ -2,7 +2,11 @@ package com.sunshineforce.hardware.controller;
 
 import com.sunshineforce.hardware.base.enums.ErrorCode;
 import com.sunshineforce.hardware.base.utils.ResponseData;
+import com.sunshineforce.hardware.domain.Braceletdata;
+import com.sunshineforce.hardware.domain.Location;
 import com.sunshineforce.hardware.domain.Probe;
+import com.sunshineforce.hardware.domain.response.BraceletdataResponse;
+import com.sunshineforce.hardware.domain.response.LocationResponse;
 import com.sunshineforce.hardware.domain.response.ProbeResponse;
 import com.sunshineforce.hardware.service.IProbeService;
 import com.sunshineforce.hardware.util.TimeUtil;
@@ -13,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import javax.xml.ws.Response;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("probe")
@@ -115,5 +119,24 @@ public class ProbeController {
 		return responseData;
 	}
 
+	@RequestMapping("getProbeLocation")
+	@ResponseBody
+	public ResponseData getProbeLocation(String braceletMac){
+		//braceletMac = "e5d41c33b7cf";
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		double location = iProbeService.getLocation(braceletMac);
+		DecimalFormat format = new DecimalFormat("0.00");
+		String l = format.format(location);
 
+		Location location1 = new Location();
+		location1.setBraceletMac(braceletMac);
+		location1.setLocation(l);
+		List<Location> locations = new ArrayList<>();
+		LocationResponse locationResponse = new LocationResponse();
+		locations.add(location1);
+		locationResponse.setRows(locations);
+		locationResponse.setTotal(1);
+		responseData.setData(locationResponse);
+		return responseData;
+	}
 }

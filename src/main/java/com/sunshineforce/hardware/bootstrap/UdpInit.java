@@ -68,10 +68,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                     log.info("-------------消费者启动------------");
                     while(true){
                         byte[] buf = queue.take();
-                        if(buf.length > 0){
-                            log.info("----------------"+count.incrementAndGet());
-                        }
-
+                        log.info(ByteUtil.ByteToHex(buf));
                         List<Braceletdata> braceletdataList = new ArrayList<>();
                         byte[] header = new byte[2];
                         System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节
@@ -92,7 +89,6 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                                 if(type == 1){
                                     braceletdataList = parseBracelete.parse(buf, probeMac);
                                     braceletdataList.stream().forEach(braceletdata -> braceletdataMapper.replaceInsert(braceletdata));
-                                    log.info("=========="+System.currentTimeMillis());
                                 }else if(type == 2){
                                     log.info("-------------------type heart beat");
                                 }else{

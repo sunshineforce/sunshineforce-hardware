@@ -55,6 +55,20 @@ public class Braceletdata extends Page implements Serializable {
     //点亮
     private int battery;
 
+    private Integer signalValue;
+
+    public Integer getSignalValue() {
+        return signalValue;
+    }
+
+    public void setSignalValue(Integer signalValue) {
+        this.signalValue = signalValue;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
     public Long getUtc() {
         return utc;
     }

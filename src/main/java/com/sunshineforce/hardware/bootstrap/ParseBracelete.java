@@ -72,6 +72,7 @@ public class ParseBracelete {
                 continue;
             }
 
+            braceletdata.setSignalValue(signal);
             braceletdata.setBraceletMac(braceletMac);
             braceletdata.setProbeMac(probeMac);
             braceletdata.setAddTime(System.currentTimeMillis());

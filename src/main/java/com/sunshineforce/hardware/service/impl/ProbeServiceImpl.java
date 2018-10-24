@@ -7,6 +7,7 @@ import com.sunshineforce.hardware.base.enums.IsNormalCode;
 import com.sunshineforce.hardware.base.enums.StatusCode;
 import com.sunshineforce.hardware.base.mybatis.impl.BasicSetServiceImpl;
 import com.sunshineforce.hardware.dao.mapper.ProbeMapper;
+import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.Probe;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.domain.response.ProbeResponse;
@@ -217,6 +218,24 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         List<Probe> probeList = probeMapper.selectByExample(probeExample);
         List<String> list = probeList.stream().map(obj -> obj.getProbeMac()).collect(Collectors.toList());
         return list;
+    }
+
+    @Override
+    public double getLocation(String braceletMac) {
+        long endTime = System.currentTimeMillis();
+        long beginTime = endTime - 60 * 1000;
+        BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, endTime);
+        braceletdataRequest.setBraceletMac(braceletMac);
+        //计算1分钟内收到数据条数
+        double result = 0;
+        List<Braceletdata> braceletdataList = iBraceletdataService.getBraceletdatasList(braceletdataRequest);
+        for(Braceletdata braceletdata : braceletdataList){
+            int signal = Math.abs(braceletdata.getSignalValue() != null ? braceletdata.getSignalValue() : 0);
+            double power = (signal-59)/(10*2.0);
+            double distance = Math.pow(10, power);
+            result = result + distance;
+        }
+        return result/braceletdataList.size();
     }
 
     private Example buildExample(Probe probe){

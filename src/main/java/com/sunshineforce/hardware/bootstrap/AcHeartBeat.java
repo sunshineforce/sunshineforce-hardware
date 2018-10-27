@@ -25,6 +25,7 @@ public class AcHeartBeat {
                 byte[] heartBeatBuf = new byte[15];
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
+                socket.setSoTimeout(3000);
                 //调用udp的服务接收数据
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
@@ -61,7 +62,6 @@ public class AcHeartBeat {
                             break;
                         }
                     }
-
                     log.info("6666666");
                     break;
                 }else{
@@ -91,6 +91,7 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
+                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -135,6 +136,7 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
+                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -188,6 +190,7 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
+                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -250,6 +253,7 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
+                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];

@@ -122,7 +122,7 @@ public class ProbeController {
 	@RequestMapping("getProbeLocation")
 	@ResponseBody
 	public ResponseData getProbeLocation(String braceletMac){
-		//braceletMac = "e5d41c33b7cf";
+		braceletMac = "e5d41c33b7cf";
 		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
 		double location = iProbeService.getLocation(braceletMac);
 		DecimalFormat format = new DecimalFormat("0.00");

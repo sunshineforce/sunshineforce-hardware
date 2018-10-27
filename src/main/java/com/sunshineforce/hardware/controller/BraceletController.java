@@ -62,4 +62,9 @@ public class BraceletController {
 		return responseData;
 	}
 
+	@RequestMapping("importData")
+	@ResponseBody
+	public void importData(){
+
+	}
 }

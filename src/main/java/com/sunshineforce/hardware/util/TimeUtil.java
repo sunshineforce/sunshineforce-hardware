@@ -10,6 +10,7 @@ public class TimeUtil {
     public static String dataMonthStringNotSign = "yyyyMM";
     public static String dataSecondStringLine = "yyyy/MM/dd HH:mm:ss";
     public static String dataSecondNoDayStringLine = "HH:mm:ss";
+    public static String dataDayStringNotSign = "yyyyMMdd";
 
     public static String getTimeString(Date date, String dataFormatString){
         return new SimpleDateFormat(dataFormatString).format(date);

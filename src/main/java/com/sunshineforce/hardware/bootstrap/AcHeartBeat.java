@@ -25,7 +25,6 @@ public class AcHeartBeat {
                 byte[] heartBeatBuf = new byte[15];
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
-                atomicInteger.incrementAndGet();
                 //调用udp的服务接收数据
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
@@ -61,8 +60,9 @@ public class AcHeartBeat {
                         if(ByteUtil.ByteToHex(responseTypeByte).equals(RESPONSEYPE)){
                             break;
                         }
-                        atomicInteger.incrementAndGet();
-                        if(atomicInteger.get() >= 3){
+                        AtomicInteger atomicInteger2 = new AtomicInteger();
+                        atomicInteger2.incrementAndGet();
+                        if(atomicInteger2.get() >= 20){
                             break;
                         }
                     }
@@ -71,7 +71,7 @@ public class AcHeartBeat {
                 }else{
                     log.info("握手失败，重试");
                     atomicInteger.incrementAndGet();
-                    if(atomicInteger.get() >= 3){
+                    if(atomicInteger.get() >= 20){
                         break;
                     }
                 }
@@ -80,7 +80,9 @@ public class AcHeartBeat {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
             }
         }
         return responseBuf;
@@ -139,7 +141,6 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
-                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -169,7 +170,7 @@ public class AcHeartBeat {
                 }else{
                     log.info("握手失败，重试");
                     atomicInteger.incrementAndGet();
-                    if(atomicInteger.get()>=2){
+                    if(atomicInteger.get()>=12){
                         return 0;
                     }
                 }
@@ -193,7 +194,6 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
-                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -218,10 +218,18 @@ public class AcHeartBeat {
                     log.info("向ip:{}:{}发送开关消息成功",heartBeatResponsePacket.getAddress().getHostAddress(), heartBeatResponsePacket.getPort());
 
                     //获取结果
-                    byte[] responseBuf = new byte[12];
-                    DatagramPacket responsePacket = new DatagramPacket(responseBuf, responseBuf.length); // 1024
-                    socket.receive(responsePacket);
-                    log.info("-------response:-------"+ByteUtil.ByteToHex(responseBuf));
+                    while(true){
+                        byte[] responseBuf = new byte[12];
+                        DatagramPacket responsePacket = new DatagramPacket(responseBuf, responseBuf.length); // 1024
+                        socket.receive(responsePacket);
+                        log.info("-------response:-------"+ByteUtil.ByteToHex(responseBuf));
+
+                        byte[] responseTypeByte = new byte[1];
+                        System.arraycopy(responseBuf, 5, responseTypeByte, 0, responseTypeByte.length);
+                        if(ByteUtil.ByteToHex(responseTypeByte).equals("b5")){
+                            break;
+                        }
+                    }
 
                     //重启
                     byte[] restartByte = AcConfig.getRestartMsg(wifi);
@@ -232,7 +240,7 @@ public class AcHeartBeat {
                 }else{
                     log.info("握手失败，重试");
                     atomicInteger.incrementAndGet();
-                    if(atomicInteger.get()>=2){
+                    if(atomicInteger.get()>=12){
                         return 0;
                     }
                 }
@@ -256,7 +264,6 @@ public class AcHeartBeat {
                 socket = new DatagramSocket(9595);
                 DatagramPacket datagramPacket = new DatagramPacket(heartBeatBuf, heartBeatBuf.length); // 1024
                 //调用udp的服务接收数据
-                socket.setSoTimeout(3000);
                 socket.receive(datagramPacket); //receive是一个阻塞型的方法，没有接收到数据包之前会一直等待。 数据实际上就是存储到了byte的自己数组中了。
                 //解析
                 byte[] type = new byte[1];
@@ -289,7 +296,7 @@ public class AcHeartBeat {
                 }else{
                     log.info("握手失败，重试");
                     atomicInteger.incrementAndGet();
-                    if(atomicInteger.get()>=2){
+                    if(atomicInteger.get()>=12){
                         return 0;
                     }
                 }

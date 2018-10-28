@@ -68,7 +68,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                     log.info("-------------消费者启动------------");
                     while(true){
                         byte[] buf = queue.take();
-                        log.info(ByteUtil.ByteToHex(buf));
+                        //log.info(ByteUtil.ByteToHex(buf));
                         List<Braceletdata> braceletdataList = new ArrayList<>();
                         byte[] header = new byte[2];
                         System.arraycopy(buf, 0, header, 0, header.length); //取前两个字节

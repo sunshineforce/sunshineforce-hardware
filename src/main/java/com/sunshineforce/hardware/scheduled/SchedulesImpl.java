@@ -22,7 +22,7 @@ public class SchedulesImpl {
     @Autowired
     private IBraceletdataService iBraceletdataService;
 
-    @Scheduled(cron = "59 59 23 0 * ?")
+    @Scheduled(cron = "0 50 23 * * ?")
     public void exportData(){
         Gson gson = new Gson();
         BraceletdataRequest exportData = new BraceletdataRequest();

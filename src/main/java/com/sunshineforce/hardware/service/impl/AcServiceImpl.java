@@ -27,8 +27,7 @@ public class AcServiceImpl implements IAcService {
     public int toggleWifi(Wifi wifi) {
         log.info("-------------开始获取云AC心跳数据------------");
         //建立握手,发送消息
-        AcHeartBeat.responseHeartBeatWithToggleWifi(wifi);
-        return 0;
+        return AcHeartBeat.responseHeartBeatWithToggleWifi(wifi);
     }
 
     @Override
@@ -44,11 +43,27 @@ public class AcServiceImpl implements IAcService {
         log.info("-------------开始获取云AC心跳数据------------");
         //建立握手,发送消息
         byte[] probeInfoByte = AcHeartBeat.requestSelect(wifi);
-
+        if(probeInfoByte == null || probeInfoByte.length <= 0){
+            probeInfo.setProbeMac("--");
+            probeInfo.setWifiSsid("--");
+            probeInfo.setWifiPwd("--");
+            probeInfo.setWifiStatus("--");
+            probeInfo.setServerIp("--");
+            probeInfo.setServerPort(0);
+            probeInfo.setVersion("--");
+            return probeInfo;
+        }
         byte[] responseTypeByte = new byte[1];
         System.arraycopy(probeInfoByte, 2, responseTypeByte, 0, responseTypeByte.length);
         if(!"bd".equals(ByteUtil.ByteToHex(responseTypeByte))){
-            return null;
+            probeInfo.setProbeMac("--");
+            probeInfo.setWifiSsid("--");
+            probeInfo.setWifiPwd("--");
+            probeInfo.setWifiStatus("--");
+            probeInfo.setServerIp("--");
+            probeInfo.setServerPort(0);
+            probeInfo.setVersion("--");
+            return probeInfo;
         }
 
         byte[] probeMacByte = new byte[6];

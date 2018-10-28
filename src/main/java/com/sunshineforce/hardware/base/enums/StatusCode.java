@@ -3,7 +3,11 @@ package com.sunshineforce.hardware.base.enums;
 public enum StatusCode {
 
     NORMAL(0, "开启"),
-    NOTNORMAL(1, "关闭");
+    NOTNORMAL(1, "关闭"),
+    WORK(3, "工作"),
+    WAIT(4, "待机"),
+    ONLINE(5, "在线"),
+    OFFLINE(6, "不在线");
     private int id;
     private String status;
 

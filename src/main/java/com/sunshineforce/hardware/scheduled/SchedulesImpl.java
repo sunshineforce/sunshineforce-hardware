@@ -22,7 +22,7 @@ public class SchedulesImpl {
     @Autowired
     private IBraceletdataService iBraceletdataService;
 
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "59 59 23 0 * ?")
     public void exportData(){
         Gson gson = new Gson();
         BraceletdataRequest exportData = new BraceletdataRequest();
@@ -33,7 +33,6 @@ public class SchedulesImpl {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         long startTime = calendar.getTime().getTime();
-        log.info("----------"+startTime);
         exportData.setBeginTime(startTime);
         exportData.setEndTime(System.currentTimeMillis());
         List<Braceletdata> braceletdataList = iBraceletdataService.getBraceletdatasList(exportData);
@@ -45,7 +44,6 @@ public class SchedulesImpl {
         }
         Map<String, Object> map = new HashMap<>();
         map.put("data", gson.toJson(exportDataList));
-        System.out.println(gson.toJson(map));
-        HttpUtil.sendPost(map, "http://localhost:8888/data/getData");
+        HttpUtil.sendPost(map, "http://demo.sunshineforce.com/data/data/getData");
     }
 }

@@ -66,6 +66,60 @@ public class ProbeController {
 		return responseData;
 	}
 
+	@RequestMapping("getListLocation")
+	@ResponseBody
+	public ResponseData getListLocation(@RequestBody Map<String, Object> request, @RequestParam(required = false, defaultValue = "1") int currentPage, @RequestParam(required = false, defaultValue = "10") int pageSize){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		Probe probe = new Probe();
+		probe.setCurrentPage(Integer.parseInt(request.get("currentPage").toString()));
+		probe.setPageSize(Integer.parseInt(request.get("pageSize").toString()));
+		probe.setOrderName(request.get("orderName").toString());
+		probe.setOrderType(request.get("orderType").toString());
+		if(request.containsKey("probeMac")){
+			probe.setProbeMac(request.get("probeMac").toString());
+		}
+		if(request.containsKey("location")){
+			probe.setLocation(request.get("location").toString());
+		}
+
+		List<ProbeResponse> probeResponseList = iProbeService.selectProbesLocation(probe);
+		if(probeResponseList.isEmpty()){
+			return ResponseData.ResultFactory.makeErrorResult(ErrorCode.NOT_FOUND);
+		}
+		ProbeResponse probeResponse = new ProbeResponse();
+		probeResponse.setRows(probeResponseList);
+		probeResponse.setTotal(iProbeService.countProbes(probe));
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
+	@RequestMapping("getListThroughtout")
+	@ResponseBody
+	public ResponseData getListThroughtout(@RequestBody Map<String, Object> request, @RequestParam(required = false, defaultValue = "1") int currentPage, @RequestParam(required = false, defaultValue = "10") int pageSize){
+		ResponseData responseData = ResponseData.ResultFactory.makeOKResult();
+		Probe probe = new Probe();
+		probe.setCurrentPage(Integer.parseInt(request.get("currentPage").toString()));
+		probe.setPageSize(Integer.parseInt(request.get("pageSize").toString()));
+		probe.setOrderName(request.get("orderName").toString());
+		probe.setOrderType(request.get("orderType").toString());
+		if(request.containsKey("probeMac")){
+			probe.setProbeMac(request.get("probeMac").toString());
+		}
+		if(request.containsKey("location")){
+			probe.setLocation(request.get("location").toString());
+		}
+
+		List<ProbeResponse> probeResponseList = iProbeService.selectProbesThroughtout(probe);
+		if(probeResponseList.isEmpty()){
+			return ResponseData.ResultFactory.makeErrorResult(ErrorCode.NOT_FOUND);
+		}
+		ProbeResponse probeResponse = new ProbeResponse();
+		probeResponse.setRows(probeResponseList);
+		probeResponse.setTotal(iProbeService.countProbes(probe));
+		responseData.setData(probeResponse);
+		return responseData;
+	}
+
     @RequestMapping("addProbe")
     @ResponseBody
 	public ResponseData addProbe(Probe probe){

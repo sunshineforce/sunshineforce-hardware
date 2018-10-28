@@ -18,6 +18,8 @@ public class ProbeResponse extends Probe{
 
     private String isNormalStr;
 
+    private String onLineStr;
+
     private List<String> failList;
 
     private List<List<String>> throughoutList;
@@ -25,6 +27,26 @@ public class ProbeResponse extends Probe{
     private List<String> probeMacList;
 
     private List<Long> probeThroughtoutList;
+
+    private String location;
+
+    @Override
+    public String getLocation() {
+        return location;
+    }
+
+    @Override
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getOnLineStr() {
+        return onLineStr;
+    }
+
+    public void setOnLineStr(String onLineStr) {
+        this.onLineStr = onLineStr;
+    }
 
     public List<Long> getProbeThroughtoutList() {
         return probeThroughtoutList;

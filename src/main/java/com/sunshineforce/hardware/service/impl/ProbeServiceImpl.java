@@ -9,8 +9,11 @@ import com.sunshineforce.hardware.base.mybatis.impl.BasicSetServiceImpl;
 import com.sunshineforce.hardware.dao.mapper.ProbeMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.Probe;
+import com.sunshineforce.hardware.domain.ProbeInfo;
+import com.sunshineforce.hardware.domain.Wifi;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.domain.response.ProbeResponse;
+import com.sunshineforce.hardware.service.IAcService;
 import com.sunshineforce.hardware.service.IBraceletdataService;
 import com.sunshineforce.hardware.service.IProbeService;
 import com.sunshineforce.hardware.util.TimeUtil;
@@ -35,6 +38,9 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
     @Autowired
     private IBraceletdataService iBraceletdataService;
 
+    @Autowired
+    private IAcService iAcService;
+
     @Override
     public List<ProbeResponse> selectProbes(Probe probe) {
         List<ProbeResponse>  probeResponseList = new ArrayList<>();
@@ -45,6 +51,7 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         //计算吞吐量，每分钟收到的数据条数
         probePageInfo.getList().stream().forEach(probeObj -> {
             ProbeResponse probeResponse = new ProbeResponse();
+            Probe updateProbe = new Probe();
             try{
                 BeanUtils.copyProperties(probeResponse, probeObj);
             }catch(IllegalAccessException e){
@@ -62,22 +69,38 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
             long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
             probeResponse.setRegularThroughput(regularThroughput);
             if(regularThroughput > 0 ){
+                probeResponse.setStatusStr(StatusCode.WORK.getStatus());
+                updateProbe.setStatus(StatusCode.WORK.getId());
                 if(regularThroughput > 12){
+                    updateProbe.setIsNormal(IsNormalCode.HEIGHT.getId());
                     probeResponse.setIsNormalStr(IsNormalCode.HEIGHT.getIsMormal());
                 }else if(regularThroughput < 8){
+                    updateProbe.setIsNormal(IsNormalCode.LOW.getId());
                     probeResponse.setIsNormalStr(IsNormalCode.LOW.getIsMormal());
                 }else{
+                    updateProbe.setIsNormal(IsNormalCode.REGULAR.getId());
                     probeResponse.setIsNormalStr(IsNormalCode.REGULAR.getIsMormal());
                 }
-            }
-            int status = probeResponse.getStatus();
-            if(status == StatusCode.NORMAL.getId()){
-                probeResponse.setStatusStr(StatusCode.NORMAL.getStatus());
             }else{
-                probeResponse.setStatusStr(StatusCode.NOTNORMAL.getStatus());
+                updateProbe.setStatus(StatusCode.WAIT.getId());
+                probeResponse.setStatusStr(StatusCode.WAIT.getStatus());
             }
+            Wifi wifi = new Wifi();
+            wifi.setProbeMac(probeObj.getProbeMac());
+            ProbeInfo probeInfo = iAcService.requestSelect(wifi);
+            if(probeInfo != null && probeInfo.getProbeMac().equals(probeObj.getProbeMac())){
+                updateProbe.setOnLine(StatusCode.ONLINE.getId());
+                probeResponse.setOnLineStr(StatusCode.ONLINE.getStatus());
+            }else{
+                updateProbe.setOnLine(StatusCode.OFFLINE.getId());
+                probeResponse.setOnLineStr(StatusCode.OFFLINE.getStatus());
 
+            }
             probeResponseList.add(probeResponse);
+
+            updateProbe.setRegularThroughput(regularThroughput);
+            updateProbe.setId(probeObj.getId());
+            probeMapper.updateByPrimaryKeySelective(updateProbe);
         });
         return probeResponseList;
     }
@@ -238,6 +261,61 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         return result/braceletdataList.size();
     }
 
+    @Override
+    public List<ProbeResponse> selectProbesLocation(Probe probe) {
+        List<ProbeResponse>  probeResponseList = new ArrayList<>();
+        Example probeExample = buildExample(probe);
+        PageHelper.startPage(probe.getCurrentPage(), probe.getPageSize(), probe.getOrderName() + " " + probe.getOrderType());
+        List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        PageInfo<Probe> probePageInfo = new PageInfo<>(probeList);
+
+        probePageInfo.getList().stream().forEach(probeObj -> {
+            ProbeResponse probeResponse = new ProbeResponse();
+            try{
+                BeanUtils.copyProperties(probeResponse, probeObj);
+            }catch(IllegalAccessException e){
+                System.out.println(e);
+            }catch(InvocationTargetException e){
+                System.out.println(e);
+            }
+
+            probeResponse.setLocation(probeObj.getLocation());
+            probeResponseList.add(probeResponse);
+        });
+        return probeResponseList;
+    }
+
+    @Override
+    public List<ProbeResponse> selectProbesThroughtout(Probe probe) {
+        List<ProbeResponse>  probeResponseList = new ArrayList<>();
+        Example probeExample = buildExample(probe);
+        PageHelper.startPage(probe.getCurrentPage(), probe.getPageSize(), probe.getOrderName() + " " + probe.getOrderType());
+        List<Probe> probeList = probeMapper.selectByExample(probeExample);
+        PageInfo<Probe> probePageInfo = new PageInfo<>(probeList);
+        //计算吞吐量，每分钟收到的数据条数
+        probePageInfo.getList().stream().forEach(probeObj -> {
+            ProbeResponse probeResponse = new ProbeResponse();
+            try{
+                BeanUtils.copyProperties(probeResponse, probeObj);
+            }catch(IllegalAccessException e){
+                System.out.println(e);
+            }catch(InvocationTargetException e){
+                System.out.println(e);
+            }
+
+            String probeMac = probeResponse.getProbeMac();
+            long currentTime = System.currentTimeMillis();
+            long beginTime = currentTime - 10 * 1000;
+            BraceletdataRequest braceletdataRequest = new BraceletdataRequest(beginTime, currentTime, probeMac);
+            //计算10s内收到数据条数
+            long regularThroughput = iBraceletdataService.countBraceletdata(braceletdataRequest);
+            probeResponse.setRegularThroughput(regularThroughput);
+            probeResponseList.add(probeResponse);
+
+        });
+        return probeResponseList;
+    }
+
     private Example buildExample(Probe probe){
         Example probeExample = new Example(Probe.class);
         Example.Criteria criteria = probeExample.createCriteria();
@@ -248,10 +326,10 @@ public class ProbeServiceImpl extends BasicSetServiceImpl<Probe> implements IPro
         if(location != null){
             criteria.andLike("location", "%" + location + "%");
         }
-        int status = Optional.ofNullable(probe.getStatus()).orElse(-1);
-        if(status != -1){
-            criteria.andEqualTo("status", status);
-        }
+//        int status = Optional.ofNullable(probe.getStatus()).orElse(-1);
+//        if(status != -1){
+//            criteria.andEqualTo("status", status);
+//        }
         String probeMac = Optional.ofNullable(probe.getProbeMac()).orElse(null);
         if(!StringUtils.isEmpty(probeMac)){
             criteria.andEqualTo("probeMac", probeMac);

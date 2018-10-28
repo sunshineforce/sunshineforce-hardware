@@ -44,6 +44,13 @@ public class AcServiceImpl implements IAcService {
         log.info("-------------开始获取云AC心跳数据------------");
         //建立握手,发送消息
         byte[] probeInfoByte = AcHeartBeat.requestSelect(wifi);
+
+        byte[] responseTypeByte = new byte[1];
+        System.arraycopy(probeInfoByte, 2, responseTypeByte, 0, responseTypeByte.length);
+        if(!"bd".equals(ByteUtil.ByteToHex(responseTypeByte))){
+            return null;
+        }
+
         byte[] probeMacByte = new byte[6];
         System.arraycopy(probeInfoByte, 5, probeMacByte, 0, probeMacByte.length);
         probeInfo.setProbeMac(ByteUtil.ByteToHex(probeMacByte));

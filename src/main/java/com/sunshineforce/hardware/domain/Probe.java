@@ -22,6 +22,16 @@ public class Probe extends Page implements Serializable {
     //实时吞吐量
     private Long regularThroughput;
 
+    private Integer onLine;
+
+    public Integer getOnLine() {
+        return onLine;
+    }
+
+    public void setOnLine(Integer onLine) {
+        this.onLine = onLine;
+    }
+
     public int getId() {
         return id;
     }

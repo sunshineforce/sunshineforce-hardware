@@ -29,4 +29,8 @@ public interface IProbeService extends IBasicSetMapper<Probe> {
     ProbeResponse getProbeThroughtoutListByTimeWithMac(String beginTime, String endTime);
     List<String> initProbe();
     double getLocation(String braceletMac);
+
+    List<ProbeResponse> selectProbesLocation(Probe probe);
+    List<ProbeResponse> selectProbesThroughtout(Probe probe);
+
 }

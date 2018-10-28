@@ -110,19 +110,32 @@
 				title : '探针mac',
                 sortable : true
 			},{
-				field : 'statusStr',
-				title : '实时状态',
+                field : 'statusStr',
+                title : '实时状态',
                 sortable : true,
                 formatter:function(value,row,index){
-				    var style = "";
-				    if(value == "normal"){
+                    var style = "";
+                    if(value == "normal"){
                         style = '<span style="color:greenyellow">'+value+'</span>';
-					}else{
+                    }else{
                         style = '<span style="color:red">'+value+'</span>';
-					}
+                    }
                     return style;
                 }
-			}],
+            },{
+                field : 'onLineStr',
+                title : '在线状态',
+                sortable : true,
+                formatter:function(value,row,index){
+                    var style = "";
+                    if(value == "normal"){
+                        style = '<span style="color:greenyellow">'+value+'</span>';
+                    }else{
+                        style = '<span style="color:red">'+value+'</span>';
+                    }
+                    return style;
+                }
+            }],
 		});
 		//600秒刷新一次
         window.setInterval("initTime()", 60 * 1000);
@@ -185,7 +198,7 @@
 								</li>
 								<li><a><i class="fa fa-edit"></i> 探针前端管理 <span class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
-										<li><a href="form_advanced.html">蓝牙探针定位管理</a></li>
+										<li><a href="probeLocation.html">蓝牙探针定位管理</a></li>
 										<li><a>无线网络管理<span class="fa fa-chevron-down"></span></a>
                                             <ul class="nav child_menu">
                                                 <li class="sub_menu"><a href="probeStatus.html">探针实时状态监控</a>

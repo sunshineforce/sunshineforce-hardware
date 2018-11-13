@@ -194,7 +194,12 @@ public class ParseBracelete {
         System.arraycopy(dataByte, 6, skipModelByte, 0, skipModelByte.length);
         int skipModel = Integer.parseInt(ByteUtil.ByteToHex(skipModelByte), 16);
         log.info("跳绳模式： "+skipModel);
-        braceletdata.setSkipModel(skipModel);
+        if (skipModel == 2){
+            braceletdata.setSkipModel(0);
+        }else{
+            braceletdata.setSkipModel(1);
+        }
+
 
         //跳绳时间
         byte[] skipTimeByte = new byte[1];

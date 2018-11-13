@@ -43,7 +43,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
-        BlockingQueue<byte[]> queue = new LinkedBlockingDeque<>(1000);
+        BlockingQueue<byte[]> queue = new LinkedBlockingDeque<>(3000);
         ExecutorService udpSingleThreadPool = Executors.newSingleThreadExecutor();
         udpSingleThreadPool.execute(new Runnable() {
             @Override
@@ -60,7 +60,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
             }
         });
 
-        ExecutorService udpfixedThreadPool = Executors.newFixedThreadPool(5);
+        ExecutorService udpfixedThreadPool = Executors.newFixedThreadPool(10);
         udpfixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {

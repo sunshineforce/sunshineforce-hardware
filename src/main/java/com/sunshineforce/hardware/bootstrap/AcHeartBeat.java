@@ -83,6 +83,7 @@ public class AcHeartBeat {
                 if(socket!=null){
                     socket.close();
                 }
+                break;
             }
         }
         return responseBuf;
@@ -127,7 +128,10 @@ public class AcHeartBeat {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
+                break;
             }
         }
     }
@@ -179,7 +183,10 @@ public class AcHeartBeat {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
+                break;
             }
         }
         return 1;
@@ -249,7 +256,10 @@ public class AcHeartBeat {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
+                break;
             }
         }
         return 1;
@@ -305,7 +315,10 @@ public class AcHeartBeat {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                socket.close();
+                if(socket!=null){
+                    socket.close();
+                }
+                break;
             }
         }
         return 1;

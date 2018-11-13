@@ -1,7 +1,6 @@
 package com.sunshineforce.hardware.scheduled;
 
 import com.google.gson.Gson;
-import com.sunshineforce.hardware.dao.mapper.BraceletdataMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.ExportData;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
@@ -22,18 +21,12 @@ public class SchedulesImpl {
     @Autowired
     private IBraceletdataService iBraceletdataService;
 
-    @Scheduled(cron = "0 50 23 * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
+    //@Scheduled(cron = "0 06 21 * * ?")
     public void exportData(){
         Gson gson = new Gson();
         BraceletdataRequest exportData = new BraceletdataRequest();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -5);//昨天0点0分0秒
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long startTime = calendar.getTime().getTime();
-        exportData.setBeginTime(startTime);
+        exportData.setBeginTime(System.currentTimeMillis() - 60 * 1000 * 60*8);
         exportData.setEndTime(System.currentTimeMillis());
         List<Braceletdata> braceletdataList = iBraceletdataService.getBraceletdatasList(exportData);
         List<ExportData> exportDataList = new ArrayList<>();
@@ -44,6 +37,9 @@ public class SchedulesImpl {
         }
         Map<String, Object> map = new HashMap<>();
         map.put("data", gson.toJson(exportDataList));
-        HttpUtil.sendPost(map, "http://demo.sunshineforce.com/data/data/getData");
+        log.info(gson.toJson(map));
+        log.info("---------"+gson.toJson(map).getBytes().length);
+        HttpUtil.sendPost(map, "https://www.sunshineforce.com/data/data/getData");
+        //HttpUtil.sendPost(map, "http://localhost:8888/data/getData");
     }
 }

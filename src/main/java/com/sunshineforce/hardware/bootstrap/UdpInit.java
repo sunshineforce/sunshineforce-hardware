@@ -1,6 +1,7 @@
 package com.sunshineforce.hardware.bootstrap;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +44,12 @@ public class UdpInit implements InitializingBean, ServletContextAware{
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
+        Calendar c = Calendar.getInstance();
+        Integer hour = c.get(Calendar.HOUR_OF_DAY);
+        if(hour < 7 || hour > 17){
+            log.info("当前的小时数：", hour);
+            return;
+        }
         BlockingQueue<byte[]> queue = new LinkedBlockingDeque<>(3000);
         ExecutorService udpSingleThreadPool = Executors.newSingleThreadExecutor();
         udpSingleThreadPool.execute(new Runnable() {

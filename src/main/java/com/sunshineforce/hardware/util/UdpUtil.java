@@ -29,7 +29,7 @@ public class UdpUtil {
 
     public static byte[] getUdpResponse(int port) {
         DatagramSocket socket = null;
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[10240];
         try {
             //建立udp的服务 ，并且要监听一个端口
             socket = new DatagramSocket(port);

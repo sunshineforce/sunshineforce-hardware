@@ -2,26 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sunshineforce.hardware.dao.mapper.BraceletdataMapper">
-    <!--<resultMap id="BaseResultMap" type="com.sunshineforce.hardware.domain.Braceletdata">-->
-        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
-        <!--<result column="probe_mac" jdbcType="VARCHAR" property="probeMac" />-->
-        <!--<result column="bracelet_mac" jdbcType="VARCHAR" property="braceletMac" />-->
-        <!--<result column="heart_rate" jdbcType="INTEGER" property="heartRate" />-->
-        <!--<result column="step" jdbcType="INTEGER" property="step" />-->
-        <!--<result column="active" jdbcType="VARCHAR" property="active" />-->
-        <!--<result column="sleep" jdbcType="VARCHAR" property="sleep" />-->
-        <!--<result column="skip_model" jdbcType="INTEGER" property="skipModel" />-->
-        <!--<result column="skip_num" jdbcType="INTEGER" property="skipNum" />-->
-        <!--<result column="skip_time" jdbcType="INTEGER" property="skipTime" />-->
-        <!--<result column="hrv" jdbcType="INTEGER" property="hrv" />-->
-        <!--<result column="utc" jdbcType="BIGINT" property="utc" />-->
-        <!--<result column="static_heart_rate" jdbcType="INTEGER" property="staticHeartRate" />-->
-        <!--<result column="uuid" jdbcType="VARCHAR" property="uuid" />-->
-        <!--<result column="add_time" jdbcType="BIGINT" property="addTime" />-->
-        <!--<result column="heart_beat" jdbcType="INTEGER" property="heartBeat" />-->
-        <!--<result column="battery" jdbcType="INTEGER" property="battery" />-->
-    <!--</resultMap>-->
+    <resultMap id="BaseResultMap" type="com.sunshineforce.hardware.domain.Braceletdata">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="probe_mac" jdbcType="VARCHAR" property="probeMac" />
+        <result column="bracelet_mac" jdbcType="VARCHAR" property="braceletMac" />
+        <result column="heart_rate" jdbcType="INTEGER" property="heartRate" />
+        <result column="step" jdbcType="INTEGER" property="step" />
+        <result column="active" jdbcType="VARCHAR" property="active" />
+        <result column="sleep" jdbcType="VARCHAR" property="sleep" />
+        <result column="skip_model" jdbcType="INTEGER" property="skipModel" />
+        <result column="skip_num" jdbcType="INTEGER" property="skipNum" />
+        <result column="skip_time" jdbcType="INTEGER" property="skipTime" />
+        <result column="hrv" jdbcType="INTEGER" property="hrv" />
+        <result column="utc" jdbcType="BIGINT" property="utc" />
+        <result column="static_heart_rate" jdbcType="INTEGER" property="staticHeartRate" />
+        <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+        <result column="add_time" jdbcType="BIGINT" property="addTime" />
+        <result column="heart_beat" jdbcType="INTEGER" property="heartBeat" />
+        <result column="battery" jdbcType="INTEGER" property="battery" />
+    </resultMap>
     <insert id="replaceInsert" parameterType="com.sunshineforce.hardware.domain.Braceletdata">
         insert ignore into t_braceletdata (probe_Mac, bracelet_mac, heart_rate, step, active, sleep, skip_model, skip_num, skip_time, hrv, utc, static_heart_rate, uuid, add_time, heart_beat, battery, signal_value) values (#{probeMac}, #{braceletMac},#{heartRate}, #{step}, #{active}, #{sleep}, #{skipModel}, #{skipNum}, #{skipTime}, #{hrv}, #{utc}, #{staticHeartRate}, #{uuid}, #{addTime}, #{heartBeat}, #{battery}, #{signalValue})
     </insert>
+
+    <select id="selectList" resultType="com.sunshineforce.hardware.domain.Braceletdata">
+        select * from t_braceletdata
+    </select>
 </mapper>

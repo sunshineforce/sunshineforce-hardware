@@ -4,6 +4,8 @@ import com.github.abel533.mapper.Mapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA
  * ProjectName: ssm-maven
@@ -17,4 +19,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BraceletdataMapper extends Mapper<Braceletdata> {
     int replaceInsert(Braceletdata braceletdata);
+    List<Braceletdata> selectList();
 }

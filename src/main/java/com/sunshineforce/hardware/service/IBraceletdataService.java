@@ -21,4 +21,5 @@ public interface IBraceletdataService extends IBasicSetMapper<Braceletdata> {
     List<Braceletdata> selectBraceletdatas(BraceletdataRequest braceletdataRequest);
     long countBraceletdata(BraceletdataRequest braceletdataRequest);
     List<Braceletdata> getBraceletdatasList(BraceletdataRequest braceletdataRequest);
+    List<Braceletdata> selectList();
 }

@@ -26,7 +26,7 @@ public class SchedulesImpl {
     public void exportData(){
         Gson gson = new Gson();
         BraceletdataRequest exportData = new BraceletdataRequest();
-        exportData.setBeginTime(System.currentTimeMillis() - 60 * 1000 * 60*8);
+        exportData.setBeginTime(System.currentTimeMillis() - 60 * 1000 * 5);
         exportData.setEndTime(System.currentTimeMillis());
         List<Braceletdata> braceletdataList = iBraceletdataService.getBraceletdatasList(exportData);
         List<ExportData> exportDataList = new ArrayList<>();
@@ -39,7 +39,8 @@ public class SchedulesImpl {
         map.put("data", gson.toJson(exportDataList));
         log.info(gson.toJson(map));
         log.info("---------"+gson.toJson(map).getBytes().length);
-        HttpUtil.sendPost(map, "https://www.sunshineforce.com/data/data/getData");
+        HttpUtil.sendPost(map, "http://www.sunshineforce.com:7014/data/data/getData");
         //HttpUtil.sendPost(map, "http://localhost:8888/data/getData");
+        //HttpUtil.sendPost(map, "https://www.sunshineforce.com/data/data/getData");
     }
 }

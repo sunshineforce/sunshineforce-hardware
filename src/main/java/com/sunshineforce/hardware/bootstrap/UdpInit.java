@@ -98,7 +98,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                         }
                     }
                 }catch(Exception e) {
-                    log.error(e.getLocalizedMessage());
+                    log.error(e.getMessage());
                 }
             }
         });

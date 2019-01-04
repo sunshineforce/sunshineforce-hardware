@@ -43,6 +43,11 @@ public class BraceletdataServiceImpl extends BasicSetServiceImpl<Braceletdata> i
     }
 
     @Override
+    public List<Braceletdata> selectList() {
+        return braceletdataMapper.selectList();
+    }
+
+    @Override
     public long countBraceletdata(BraceletdataRequest braceletdataRequest) {
         Example braceletdataExample = buildExample(braceletdataRequest);
         return braceletdataMapper.selectCountByExample(braceletdataExample);

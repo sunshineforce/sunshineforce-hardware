@@ -32,26 +32,26 @@ public class HttpUtil {
                     nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue().toString()));
                 }
             }
-            Gson gson = new Gson();
             //设置参数到请求对象中
             httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
             CloseableHttpResponse response = httpClient.execute(httpPost);
+            log.info("---------------------------------------"+response.getStatusLine().getStatusCode()+"----------------------------------");
             if(response.getStatusLine().getStatusCode() == 200){
                 InputStream entityContent = response.getEntity().getContent();
                 result = entityContent.toString();
             }
         } catch (ClientProtocolException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
         } catch (ParseException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
         } catch (IOException e) {
-            log.debug(e.getMessage());
+            log.error(e.getMessage());
         } finally {
             // 关闭连接,释放资源
             try {
                 httpClient.close();
             } catch (IOException e) {
-                log.debug(e.getMessage());
+                log.info(e.getMessage());
             }
         }
         return result;

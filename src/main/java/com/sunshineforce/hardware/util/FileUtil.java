@@ -32,7 +32,6 @@ public class FileUtil {
                 // 显示行号
                 int start = StringUtils.indexOf(tempString, "ad ba");
                 String message = tempString.substring(start);
-                Thread.sleep(1000);
                 System.out.println("line: "+line+"message: "+message);
                 UdpUtil.sendUdpRequest(ByteUtil.HexToByte(StringUtils.replace(message, " ", "")));
                 line++;

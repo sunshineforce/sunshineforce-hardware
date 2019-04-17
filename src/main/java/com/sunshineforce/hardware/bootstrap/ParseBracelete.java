@@ -196,10 +196,11 @@ public class ParseBracelete {
         log.info("跳绳模式： "+skipModel);
         if (skipModel == 2){
             braceletdata.setSkipModel(0);
-        }else{
+        }else if(skipModel == 1){
             braceletdata.setSkipModel(1);
+        }else{
+            braceletdata.setSkipModel(2);
         }
-
 
         //跳绳时间
         byte[] skipTimeByte = new byte[1];

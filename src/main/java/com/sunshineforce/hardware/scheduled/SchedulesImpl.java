@@ -41,6 +41,5 @@ public class SchedulesImpl {
         log.info("---------"+gson.toJson(map).getBytes().length);
         HttpUtil.sendPost(map, "http://www.sunshineforce.com:7014/data/data/getData");
         //HttpUtil.sendPost(map, "http://localhost:8888/data/getData");
-        //HttpUtil.sendPost(map, "https://www.sunshineforce.com/data/data/getData");
     }
 }

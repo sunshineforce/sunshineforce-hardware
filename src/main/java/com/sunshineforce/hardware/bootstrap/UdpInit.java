@@ -46,7 +46,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
 	public void setServletContext(ServletContext servletContext) {
         Calendar c = Calendar.getInstance();
         Integer hour = c.get(Calendar.HOUR_OF_DAY);
-        if(hour < 7 || hour > 17){
+        if(hour < 8 || hour > 16){
             log.info("当前的小时数：", hour);
             return;
         }
@@ -58,6 +58,7 @@ public class UdpInit implements InitializingBean, ServletContextAware{
                 log.info("-------------生产者启动------------");
                 while (true) {
                     byte[] buf = UdpUtil.getUdpResponse(3333);
+                    log.info(new String(buf));
                     try {
                         queue.put(buf);
                     } catch (InterruptedException e) {

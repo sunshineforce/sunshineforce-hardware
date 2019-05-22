@@ -3,7 +3,6 @@ package com.sunshineforce.hardware.controller;
 import com.sunshineforce.hardware.base.enums.ErrorCode;
 import com.sunshineforce.hardware.base.utils.ResponseData;
 import com.sunshineforce.hardware.dao.mapper.BraceletdataMapper;
-import com.sunshineforce.hardware.dao.mapper.SportIntensityMapper;
 import com.sunshineforce.hardware.domain.Braceletdata;
 import com.sunshineforce.hardware.domain.request.BraceletdataRequest;
 import com.sunshineforce.hardware.domain.response.BraceletdataResponse;
@@ -27,9 +26,6 @@ public class BraceletController {
     private IBraceletdataService iBraceletdataService;
     @Autowired
     private BraceletdataMapper braceletdataMapper;
-
-    @Autowired
-    private SportIntensityMapper sportIntensityMapper;
 
     @RequestMapping("getList")
     @ResponseBody
